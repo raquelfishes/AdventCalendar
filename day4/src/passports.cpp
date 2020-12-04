@@ -40,7 +40,7 @@ struct Passport
       ( std::regex_search( hgt, sm, hgtInExp ) && ( std::stoi( sm[1] ) >= 59 && std::stoi( sm[1] ) <= 76 ) );
 
     std::regex hclExp( "#([a-f0-9]){6}" );
-    valid &= std::regex_search( hcl, sm, hclExp );
+    valid &= std::regex_match( hcl, sm, hclExp );
     valid &= ecl == "amb" || ecl == "blu" || ecl == "brn" || ecl == "gry" || ecl == "grn" || ecl == "hzl" || ecl == "oth";
     valid &= pid.size() == 9 && std::all_of( pid.begin(), pid.end(), [] ( char c ) { return isdigit( c ); } );
     return valid;
