@@ -10,40 +10,27 @@
 #include "resource.h"
 
 
-int binarySearch( std::string seat, int pos, int min, int max )
+int countNonRepeatedCharacters( std::vector<std::string>& group )
 {
-  if ( min == max )
-    return min;
-  if ( pos < seat.size() )
+  std::string joinQuestions = "";
+  std::for_each( group.begin(), group.end(), [&joinQuestions] ( std::string& person ) { joinQuestions += person; } );
+  std::sort( joinQuestions.begin(), joinQuestions.end() );
+  joinQuestions.erase(std::unique( joinQuestions.begin(), joinQuestions.end()), joinQuestions.end());
+  return joinQuestions.size();
+}
+
+int countRepeatedCharactersByAll( std::vector<std::string>& group )
+{
+  std::string joinQuestions = "";
+  std::for_each( group.begin(), group.end(), [&joinQuestions] ( std::string& person ) { joinQuestions += person; } );
+  std::sort( joinQuestions.begin(), joinQuestions.end() );
+  int repeatedChars = 0;
+  for ( auto c : group[0] )
   {
-    if ( ( seat[pos] == 'F' ) || ( seat[pos] == 'L' ) )
-    {
-      max -= ( ( max - min ) / 2 ) + 1;
-      return binarySearch( seat, ++pos, min, max );
-    }
-    else if ( ( seat[pos] == 'B' ) || ( seat[pos] == 'R' ) )
-    {
-      min += ( ( max - min ) / 2 ) + 1;
-      return binarySearch( seat, ++pos, min, max );
-    }
+    repeatedChars = std::count( joinQuestions.begin(), joinQuestions.end(), c ) == group.size() ? repeatedChars + 1 : repeatedChars;
   }
-}
 
-int computeRow( std::string seat )
-{
-  constexpr int numberOfRows = 128;
-  return binarySearch( seat, 0, 0, numberOfRows-1);
-}
-
-int computeColumn( std::string seat )
-{
-  constexpr int numberOfColumns = 8;
-  return binarySearch( seat, 0, 0, numberOfColumns - 1 );
-}
-
-int computeSeatId( const int row, const int column )
-{
-  return row * 8 + column;
+  return repeatedChars;
 }
 
 void adventDay5()
@@ -57,52 +44,46 @@ void adventDay5()
   }
 
   
-  std::vector<std::string> seats;
+  std::vector<std::vector<std::string>> forms;
   std::string line;
   std::smatch sm;
+  std::vector<std::string> group;
   while ( getline( myfile, line ) )
   { 
-    seats.push_back( line );
+    if ( line == "" )
+    {
+      forms.push_back( group );
+      group.clear();
+      continue;
+    }
+    group.push_back(line);
   }
-  if ( seats.empty() )
+  if ( !group.empty() )
+  {
+    forms.push_back( group );
+  }
+
+  if ( forms.empty() )
   {
     std::cout << "Error, no seats at file" << std::endl;
   }
   
-  constexpr int numberOfRows = 128;
-  constexpr int numberOfColumns = 8;
-
-  std::vector<std::vector<bool>> plane;
-  plane.resize( numberOfRows, std::vector<bool>( numberOfColumns, false ) );
-  
-  int highestSeatId = 0;
-  std::for_each( seats.begin(), seats.end(), [&highestSeatId, &plane, &numberOfRows, &numberOfColumns]( std::string& seat )
+  int numberOfQuestions = 0;
+  std::for_each( forms.begin(), forms.end(), [&numberOfQuestions]( std::vector<std::string>& group )
   {
-    const int row = binarySearch( seat.substr( 0, 7 ), 0, 0, numberOfRows - 1 );
-    const int column = binarySearch( seat.substr( 7 ), 0, 0, numberOfColumns - 1 );
-    plane[row][column] = true;
-    const int seatId = computeSeatId( row, column );
-    highestSeatId = highestSeatId < seatId ? seatId : highestSeatId;
+    const int numberOfGroupQuestions = countNonRepeatedCharacters( group );
+    numberOfQuestions += numberOfGroupQuestions;
   } );
-  std::cout << "Part1: The highest seat id is: " << highestSeatId << std::endl;
+  std::cout << "Part1: The number of questions answered are: " << numberOfQuestions << std::endl;
 
 
-  int mySeatId;
-  for ( auto i=0; i<plane.size(); ++i )
+  numberOfQuestions = 0;
+  std::for_each( forms.begin(), forms.end(), [&numberOfQuestions] ( std::vector<std::string>& group )
   {
-    int used = std::accumulate( plane[i].begin(), plane[i].end(), 0 );
-    if ( used == 7 )
-    {
-      for ( auto j = 0; j < plane[i].size(); ++j )
-      {
-        if (!plane[i][j])
-        {
-          mySeatId = computeSeatId( i, j );
-        }
-      }
-    }
-  }
-  std::cout << "Part2: My seatId is: " << mySeatId << std::endl;
+    const int numberOfGroupQuestions = countRepeatedCharactersByAll( group );
+    numberOfQuestions += numberOfGroupQuestions;
+  } );
+  std::cout << "Part2: The number of questions answered by all group are: " << numberOfQuestions << std::endl;
 
 
 }
