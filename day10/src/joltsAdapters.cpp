@@ -78,7 +78,13 @@ void adventDay10()
 
   // We need to check the length of 1's 
   // Valid combination is sum(0:1s lengths - 1) + 1
-  // e. 313 = 1valid combi | 3113 = 2 valid combi | 31113 = 4 valid combi | 311113 = 7 valid combi
+  // 1 = sum (0:1-1) +1 = sum(0:0) + 1 = 0+1 = 1
+  // 2 = sum(0:2-1)+1 = sum(0:1)+1 = 1+1 =2
+  // 3 = sum(0:3-1)+1 = sum(0:2)+1 = 1+2+1 = 4
+  // 4 = sum(0:4-1)+1 = sum(0:3)+1 = 1+2+3+1 = 7
+  // .....
+  // e. 313 = 1 valid combi | 3113 = 2 valid combi | 31113 = 4 valid combi | 311113 = 7 valid combi
+  // 1 * 2 * 4 * 1 * ... 
   for ( auto i = 0; i < difference.size(); ++i )
   {
     if ( difference[i] == 1 )
@@ -103,7 +109,6 @@ void adventDay10()
       i += numberOf1s - 1;
     }
   }
-  //int combinations = validCombination( adapters, 0, 0, finalAdapter );
   std::cout << "Part2: The number of valid adapter combinations are: " << validCombination << std::endl;
 
 
