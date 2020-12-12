@@ -31,6 +31,30 @@ void addToDirection( const char dir, const int value, std::pair<int, int>& pos )
   }
 }
 
+void rotatePoint( const char dir, const int value, std::pair<int, int>& pos )
+{
+  const int nRotate = value / 90;
+  const bool isR = dir == 'R';
+
+  for ( auto i = 0; i < nRotate; ++i )
+  {
+    if ( dir == 'R' )
+    {
+      //(10, 4) -> (4, -10) -> (-10, -4) -> (-4, 10 ) -> (10, 4)
+      const int aux = pos.first;
+      pos.first = pos.second;
+      pos.second = -1 * aux;
+    }
+    else if ( dir == 'L' )
+    {
+      //(10, 4) -> (-4, 10) -> (-10, -4) -> (4, -10 ) -> (10, 4)
+      const int aux = pos.first;
+      pos.first = -1 * pos.second;
+      pos.second = aux;
+    }
+  }
+}
+
 void adventDay12()
 {
   // Open numbers file
@@ -85,20 +109,32 @@ void adventDay12()
     }
   }
 
-  const int result = std::abs( currentPos.first ) + std::abs( currentPos.second );
+  int result = std::abs( currentPos.first ) + std::abs( currentPos.second );
   std::cout << "Part1: The result is: " << result << std::endl;
 
- 
 
-  // We need to check the length of 1's 
-  // Valid combination is sum(0:1s lengths - 1) + 1
-  // 1 = sum (0:1-1) +1 = sum(0:0) + 1 = 0+1 = 1
-  // 2 = sum(0:2-1)+1 = sum(0:1)+1 = 1+1 =2
-  // 3 = sum(0:3-1)+1 = sum(0:2)+1 = 1+2+1 = 4
-  // 4 = sum(0:4-1)+1 = sum(0:3)+1 = 1+2+3+1 = 7
-  // .....
-  // e. 313 = 1 valid combi | 3113 = 2 valid combi | 31113 = 4 valid combi | 311113 = 7 valid combi
-  // 1 * 2 * 4 * 1 * ... 
+  std::pair<int, int> waypoint( 10, 1 ); // E, N
+  std::pair<int, int> ship( 0, 0 );  // Positive values E,N
+
+  for ( auto& dir : directions )
+  {
+    if ( std::find( cardinalDirections.begin(), cardinalDirections.end(), dir.first ) != cardinalDirections.end() )
+    {
+      addToDirection( dir.first, dir.second, waypoint );
+    }
+    if ( dir.first == 'F' )
+    {
+      ship.first += waypoint.first * dir.second;
+      ship.second += waypoint.second * dir.second;
+    }
+    else if ( dir.first == 'R'  || dir.first == 'L' )
+    {
+      rotatePoint( dir.first, dir.second, waypoint );
+    }
+  }
+  
+  result = std::abs( ship.first ) + std::abs( ship.second );
+  std::cout << "Par2: The result is: " << result << std::endl;
 
 }
 
