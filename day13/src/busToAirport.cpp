@@ -29,15 +29,17 @@ void adventDay13()
   std::stringstream ss( line );
   std::string value;
 
-  std::vector<std::string> busLine;
+  int time = 0;
+  std::vector<int> busDiffTime;
   std::vector<int> busIds;
   while ( getline( ss, value, ',' ) )
   {
     if ( value != "x" )
     {
       busIds.push_back( std::stoi( value ) );
+      busDiffTime.push_back( time );
     }
-    busLine.push_back( value );
+    time++;
   }
   
   if ( busIds.empty() )
@@ -73,8 +75,40 @@ void adventDay13()
   const int result = ( currentTime - originalTime ) * usedBus;
   std::cout << "Part1: The result is: " << result << std::endl;
 
+  //// Yes, I tried to make it by force
+  //auto maxBus = std::max_element( busIds.begin(), busIds.end() );
+  //auto maxBusId = std::distance( busIds.begin(), maxBus );
+  //currentTime = busIds[maxBusId]-busDiffTime[maxBusId];
+  //bool sequenceNotFound = false;
+  //while ( !sequenceNotFound )
+  //{
+  //  for ( auto i=0; i< busIds.size(); ++i )
+  //  {
+  //    sequenceNotFound = true;
+  //    if (( currentTime + busDiffTime[i]) % busIds[i] != 0 )
+  //    {
+  //      sequenceNotFound &= false;
+  //      break;
+  //    }
+  //  }
+  //  if ( !sequenceNotFound )
+  //  {
+  //    currentTime+= busIds[maxBusId];
+  //  }
+  //  
+  //}
 
-  std::cout << "Par2: The result is: " << result << std::endl;
+  long long step = busIds[0];
+  currentTime = 0;
+  for ( auto i=1; i< busIds.size(); ++i )
+  {
+    while ( ( currentTime + busDiffTime[i] ) % busIds[i] != 0 )
+    {
+      currentTime += step;
+    }
+    step *= busIds[i];
+  }
+  std::cout << "Par2: The result is: " << currentTime << std::endl;
 
 }
 
