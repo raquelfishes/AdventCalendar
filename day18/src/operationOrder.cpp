@@ -11,9 +11,77 @@
 
 #include "resource.h"
 
+long long evaluate( std::string& operation ); // forward declaration
+long long evaluate2( std::string& operation ); // forward declaration
+
+void popTerm( std::string& operation )
+{
+  operation.erase( operation.begin(), operation.begin() + 1 );
+}
+
+long long getTerm( std::string& operation, const bool part2=false )
+{
+  long long result = 0;
+  if ( isdigit( operation.front() ) )
+  {
+    result = operation[0] -'0';
+    popTerm(operation);    
+  }
+  else if ( operation.front() == '(' )
+  {
+    // '('
+    popTerm( operation );
+    if ( part2 )
+    {
+      result = evaluate2( operation );
+    }
+    else
+    {
+      result = evaluate( operation );
+    }
+    // ')'
+    popTerm( operation );
+  }
+  return result;
+}
+
 long long evaluate( std::string& operation )
 {
+  long long result = getTerm(operation);
+  while (( !operation.empty() ) && ( operation.front() == '+' || operation.front() == '*') )
+  {
+    if ( operation.front() == '+' )
+    {
+      popTerm( operation );
+      result += getTerm( operation );
+    }
+    else if ( operation.front() == '*' )
+    {
+      popTerm( operation );
+      result *= getTerm( operation );
+    }
+  }
+  return result;
+}
 
+
+long long evaluate2( std::string& operation )
+{
+  long long result = getTerm( operation, true );
+  while ( ( !operation.empty() ) && ( operation.front() == '+' || operation.front() == '*' ) )
+  {
+    if ( operation.front() == '+' )
+    {
+      popTerm( operation );
+      result += getTerm( operation, true );
+    }
+    else if ( operation.front() == '*' )
+    {
+      popTerm( operation );
+      result *= evaluate2( operation );
+    }
+  }
+  return result;
 }
 
 void adventDay18()
@@ -32,15 +100,8 @@ void adventDay18()
   while ( getline( myfile, line ) )
   {
     // Remove whitespace from operation
-    std::remove( line.begin(), line.end(), ' ' );
-    std::string reverseLine;
-    std::for_each( line.rbegin(), line.rend(), [&reverseLine]( const char& c ) 
-    {
-      if ( c == ')' ) reverseLine.push_back( '(' );
-      else if ( c == '(' ) reverseLine.push_back( ')' );
-      else reverseLine.push_back( c );
-    } );
-    operations.push_back( reverseLine );
+    line.erase(std::remove( line.begin(), line.end(), ' ' ), line.end());
+    operations.push_back( line );
   }
   if ( operations.empty() )
   {
@@ -48,15 +109,21 @@ void adventDay18()
     return;
   }
 
+  std::vector<std::string> operationsPart1( operations );
   long long result = 0;
-  std::for_each( operations.begin(), operations.end(), [&result]( std::string& operation )
+  std::for_each( operationsPart1.begin(), operationsPart1.end(), [&result]( std::string& operation )
   {
     result += evaluate( operation );
   } );
-
-  std::cout << "Part 1:" << result << std::endl;
+  std::cout << "Part 1:  " << result << std::endl;
   
-  //std::cout << "Part 2:" << result << std::endl;
+  std::vector<std::string> operationsPart2( operations );
+  result = 0;
+  std::for_each( operationsPart2.begin(), operationsPart2.end(), [&result]( std::string& operation )
+  {
+    result += evaluate2( operation );
+  } );
+  std::cout << "Part 2:  " << result << std::endl;
   //std::cout << "Part 2:" << result << std::endl;
 
 }
