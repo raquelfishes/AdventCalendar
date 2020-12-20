@@ -11,118 +11,96 @@
 
 #include "resource.h"
 
-static const std::regex finalExpr( "\"(\\w)\"" );
-static const std::regex orExpr( "(.*) \\| (.*)" );
 
-struct Rule
+
+struct Tile
 {
-  int ruleId;
-  std::vector<std::string> followRules;
-  Rule() {};
-  Rule( int ruleId, std::string value ) : ruleId( ruleId ) 
+  int tileId;
+  std::vector<std::string> tileInfo;
+  typedef std::pair<std::string, int> side;
+
+  side left;
+  side right;
+  side up;
+  side down;
+
+  Tile() {};
+  Tile( int tileId ) : tileId( tileId )
   {
-    parseRule( value );
+    left = std::make_pair<std::string, int>( "", -1 );
+    right = std::make_pair<std::string, int>( "", -1 );
+    up = std::make_pair<std::string, int>( "", -1 );
+    down = std::make_pair<std::string, int>( "", -1 );
   };
 
-  bool isTerminal() 
+  bool isCorner() const
   {
-    for ( auto& valid : followRules )
-    {
-      std::regex validExpr( "[ab]+" );
-      std::smatch sm;
-      if ( !std::regex_match( valid, sm, validExpr ) )
-        return false;
-    }
-    return true;
+    int countSides = 0;
+    countSides += left.second != -1;
+    countSides += right.second != -1;
+    countSides += up.second != -1;
+    countSides += down.second != -1;
+
+    return countSides == 2;
   }
 
-  void parseRule( std::string& rule )
+  void computeSides()
   {
-    std::smatch sm;
-    if ( std::regex_search( rule, sm, finalExpr ) )
+    up.first = tileInfo[0];
+    down.first = tileInfo[tileInfo.size() - 1];
+    for ( auto& row : tileInfo )
     {
-      followRules = { sm[1].str() };
-    }
-    else if ( std::regex_search( rule, sm, orExpr ) )
-    {
-      followRules.push_back( sm[1].str() );
-      followRules.push_back( sm[2].str() );
-    }
-    else
-    {
-      followRules.push_back( rule );
+      left.first.push_back( row[0] );
+      right.first.push_back( row[row.size()-1] );
     }
   }
-  
-  int getNextRule()
+
+  bool checkSide( side& side, Tile& tile )
   {
-    for ( auto& rule : followRules )
+    if ( side.second == -1 )
     {
-      std::regex n1Expr( "(\\d+)(.*)?" );
-      std::regex n2Expr( "[ab]+ (\\d+)(.*)?" );
-      std::smatch sm;
-      if ( std::regex_search( rule, sm, n1Expr ) )
+      std::string reverse = side.first;
+      std::reverse( reverse.begin(), reverse.end() );
+      if ( ( tile.left.second == -1 ) && ( ( side.first == tile.left.first ) || ( reverse == tile.left.first ) ) )
       {
-        return std::stoi( sm[1].str());
+        side.second = tile.tileId;
+        tile.left.second = tileId;
+        return true;
       }
-      else if ( std::regex_search( rule, sm, n1Expr ) )
+      if ( ( tile.right.second == -1 ) && ( ( side.first == tile.right.first ) || ( reverse == tile.right.first ) ) )
       {
-        return std::stoi( sm[2].str() );
+        side.second = tile.tileId;
+        tile.right.second = tileId;
+        return true;
+      }
+      if ( ( tile.up.second == -1 ) && ( ( side.first == tile.up.first ) || ( reverse == tile.up.first ) ) )
+      {
+        side.second = tile.tileId;
+        tile.up.second = tileId;
+        return true;
+      }
+      if ( ( tile.down.second == -1 ) && ( ( side.first == tile.down.first ) || ( reverse == tile.down.first ) ) )
+      {
+        side.second = tile.tileId;
+        tile.down.second = tileId;
+        return true;
       }
     }
-    return -1;
+    return false;
   }
 
-  void replaceRule( int r, const std::vector<std::string>& values )
+  void matchTile( Tile& tile )
   {
-    std::vector<std::string> auxFollowRules;
-    for ( auto& rule : followRules )
-    {
-      auto found = rule.find( std::to_string( r ));
-      if ( found == std::string::npos )
-      {
-        auxFollowRules.push_back( rule );
-        continue;
-      }
-
-      for ( auto& value : values )
-      {
-        std::string auxRule = rule;
-        found = auxRule.find( std::to_string( r ) );
-        while ( found != std::string::npos )
-        {
-          std::string before = auxRule.substr( 0, found );
-          std::string after = auxRule.substr( found + std::to_string( r ).length() );
-          auxRule = before + " " + value + " " + after;
-          found = auxRule.find( std::to_string( r ) );
-        }
-        auxFollowRules.push_back( auxRule );
-      }
-    }
-    followRules = auxFollowRules;
+    bool matched = false;
+    matched = checkSide( left, tile );
+    matched = checkSide( right, tile );
+    matched = checkSide( up, tile );
+    matched = checkSide( down, tile );
   }
 };
 
-void evaluate( Rule& rule, std::map<int, Rule>& rules )
-{
-  bool isTerminal = rule.isTerminal();
-  if ( isTerminal )
-    return;
 
-  while ( !isTerminal )
-  {
-    int nextRule = rule.getNextRule();
-    if ( nextRule == -1 )
-      return;
-
-    evaluate( rules[nextRule], rules );
-    rule.replaceRule( nextRule, rules[nextRule].followRules );
-    isTerminal = rule.isTerminal();
-  }
-}
-
-
-void adventDay19()
+void adventDay20()
 {
   // Open numbers file
   std::ifstream myfile( FILE_PATH );
@@ -132,59 +110,57 @@ void adventDay19()
     return;
   }
 
-  std::vector<Rule> rules;
-  std::map<int, Rule> mapRules;
-  std::vector<std::string> words;
+  std::map<int, Tile> mapTiles;
   std::string line;
-  bool isRule = true;
+  std::regex expr( "Tile (\\d+):" );
+  std::smatch sm;
+  int tileId = -1;
   while ( getline( myfile, line ) )
   {
-    if ( line == "" )
+    if ( std::regex_search( line, sm, expr ) )
     {
-      isRule = false;
-      continue;
+      tileId = std::stoi( sm[1].str() );
+      mapTiles[tileId] = Tile( tileId );
     }
-      
-
-    if ( isRule )
+    else if ( line != "" )
     {
-      std::regex expr( "(\\d+): (.*)" );
-      std::smatch sm;
-      if ( std::regex_search( line, sm, expr ) )
-      {
-        Rule auxRule = Rule( std::stoi( sm[1].str() ), sm[2].str() );
-        rules.push_back( auxRule );
-        mapRules.insert( { auxRule.ruleId, auxRule } );
-      }
-    }
-    else
-    {
-      words.push_back( line );
+      mapTiles[tileId].tileInfo.push_back( line );
     }
   }
-  if ( rules.empty() || words.empty() )
+  if ( mapTiles.empty() )
   {
     std::cout << "Error, no valid input file" << std::endl;
     return;
   }
 
-  std::sort( rules.begin(), rules.end(), []( const Rule& rule1, const Rule& rule2 ) { return rule1.ruleId < rule2.ruleId; } );
 
-  evaluate( mapRules[0], mapRules );
+  for ( auto& tile : mapTiles )
+  {
+    tile.second.computeSides();
+  }
 
-  std::for_each( mapRules[0].followRules.begin(), mapRules[0].followRules.end(), []( std::string& aux ) 
+
+  for ( auto& tile1 : mapTiles )
   {
-    aux.erase( std::remove( aux.begin(), aux.end(), ' ' ), aux.end() );
-  } );
-  int result = 0;
-  for ( auto& word : words )
-  {
-    auto found = std::find( mapRules[0].followRules.begin(), mapRules[0].followRules.end(), word );
-    if ( found != mapRules[0].followRules.end() )
+    for ( auto& tile2 : mapTiles )
     {
-      result++;
+      if ( tile1.first == tile2.first )
+      {
+        continue;
+      }
+      tile1.second.matchTile( tile2.second );
     }
   }
+
+  long long result = 1;
+  for ( auto& tile : mapTiles )
+  {
+    if ( tile.second.isCorner() )
+    {
+      result *= tile.second.tileId;
+    }
+  }
+
   std::cout << "Part 1:  " << result << std::endl;
   
   std::cout << "Part 2:  " << result << std::endl;
@@ -196,5 +172,5 @@ void adventDay19()
 
 int main( int argc, char* argv[] )
 {
-  adventDay19();
+  adventDay20();
 }
