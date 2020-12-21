@@ -31,6 +31,7 @@ set(AOC_DAY17 "${CMAKE_CURRENT_SOURCE_DIR}/day17/.")
 set(AOC_DAY18 "${CMAKE_CURRENT_SOURCE_DIR}/day18/.")
 set(AOC_DAY19 "${CMAKE_CURRENT_SOURCE_DIR}/day19/.")
 set(AOC_DAY20 "${CMAKE_CURRENT_SOURCE_DIR}/day20/.")
+set(AOC_DAY21 "${CMAKE_CURRENT_SOURCE_DIR}/day21/.")
 
 
 add_subdirectory(${AOC_DAY1})
@@ -53,3 +54,4 @@ add_subdirectory(${AOC_DAY17})
 add_subdirectory(${AOC_DAY18})
 add_subdirectory(${AOC_DAY19})
 add_subdirectory(${AOC_DAY20})
+add_subdirectory(${AOC_DAY21})
