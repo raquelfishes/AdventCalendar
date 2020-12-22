@@ -12,180 +12,61 @@
 #include "resource.h"
 
 
-
-struct Tile
+class Player 
 {
-  int tileId;
-  std::vector<std::string> tileInfo;
-  typedef std::pair<std::string, int> side;
+public:
+  Player() = default;
+  Player( const int& id ) : id_( id ) {};
 
-  side left;
-  side right;
-  side up;
-  side down;
-
-  Tile() {};
-  Tile( int tileId ) : tileId( tileId )
+  void addCards( const std::vector<int>& cards )
   {
-    left = std::make_pair<std::string, int>( "", -1 );
-    right = std::make_pair<std::string, int>( "", -1 );
-    up = std::make_pair<std::string, int>( "", -1 );
-    down = std::make_pair<std::string, int>( "", -1 );
-  };
-
-  void rotate(const int l, const int r)
-  {
-    std::vector<std::string> newTileInfo(tileInfo);
-    if ( l == 1 || r == 3 )
-    {
-      for ( auto i = 0; i < tileInfo.size(); ++i )
-      {
-        for ( auto j = 0; j < tileInfo[i].size(); ++j )
-        {
-          newTileInfo[i][tileInfo.size() - 1 - j] = tileInfo[i][j];
-        }
-      }
-      left.second = up.second;
-      down.second = left.second;
-      right.second = down.second;
-      up.second = right.second;
-
-    }
-    if ( l == 2 || r == 2 )
-    {
-      for ( auto i = 0; i < tileInfo.size(); ++i )
-      {
-        for ( auto j = 0; j < tileInfo[i].size(); ++j )
-        {
-          newTileInfo[tileInfo.size() - 1 - i][tileInfo.size() - 1 - j] = tileInfo[i][j];
-        }
-      }
-
-      left.second = right.second;
-      down.second = up.second;
-      right.second = left.second;
-      up.second = down.second;
-    }
-    if ( l == 3 || r == 1 )
-    {
-      for ( auto i = 0; i < tileInfo.size(); ++i )
-      {
-        for ( auto j = 0; j < tileInfo[i].size(); ++j )
-        {
-          newTileInfo[tileInfo.size() - 1 - i][j] = tileInfo[i][j];
-        }
-      }
-      left.second = down.second;
-      down.second = right.second;
-      right.second = up.second;
-      up.second = left.second;
-    }
+    cards_.insert( cards_.end(), cards.begin(), cards.end() );
   }
 
-  void flip( const int l, const int u )
+  void addCard( const int card )
   {
-    if ( l == 1 )
+    cards_.push_back( card );
+  }
+
+  bool hasCards()
+  {
+    return !cards_.empty();
+  }
+
+  int playCard()
+  {
+    int result = cards_.front();
+    cards_.erase( cards_.begin() );
+    std::cout << "Player " << id_ << " plays: " << result << std::endl;
+    return result;
+  }
+
+  long long getResult()
+  {
+    long long result = 0;
+    for ( int i = 0; i < cards_.size(); ++i )
     {
-      std::transform( tileInfo.begin(), tileInfo.end(), tileInfo.begin(), []( std::string& line ) 
-      {
-        std::reverse( line.begin(), line.end() );
-      } );
-
-      left.second = right.second;
-      right.second = left.second;
+      result += cards_[cards_.size() - 1 - i] * ( i+1 );
     }
-    if ( u == 1 )
-    {
-      std::reverse( tileInfo.begin(), tileInfo.end() );
-
-      down.second = up.second;
-      up.second = down.second;
-    }
+    return result;
   }
 
-  bool isCorner() const
+  void printDeck()
   {
-    int countSides = 0;
-    countSides += left.second != -1;
-    countSides += right.second != -1;
-    countSides += up.second != -1;
-    countSides += down.second != -1;
-
-    return countSides == 2;
-  }
-
-  void computeSides()
-  {
-    up.first = tileInfo[0];
-    down.first = tileInfo[tileInfo.size() - 1];
-    left.first.clear();
-    right.first.clear();
-    for ( auto& row : tileInfo )
-    {
-      left.first.push_back( row[0] );
-      right.first.push_back( row[row.size()-1] );
-    }
-  }
-
-  bool checkSide( side& s, Tile& t )
-  {
-    if ( s.second == -1 )
-    {
-      std::string reverse = s.first;
-      std::reverse( reverse.begin(), reverse.end() );
-      if ( ( t.left.second == -1 ) && ( ( s.first == t.left.first ) || ( reverse == t.left.first ) ) )
-      {
-        s.second = t.tileId;
-        t.left.second = tileId;
-        return true;
-      }
-      if ( ( t.right.second == -1 ) && ( ( s.first == t.right.first ) || ( reverse == t.right.first ) ) )
-      {
-        s.second = t.tileId;
-        t.right.second = tileId;
-        return true;
-      }
-      if ( ( t.up.second == -1 ) && ( ( s.first == t.up.first ) || ( reverse == t.up.first ) ) )
-      {
-        s.second = t.tileId;
-        t.up.second = tileId;
-        return true;
-      }
-      if ( ( t.down.second == -1 ) && ( ( s.first == t.down.first ) || ( reverse == t.down.first ) ) )
-      {
-        s.second = t.tileId;
-        t.down.second = tileId;
-        return true;
-      }
-    }
-    return false;
-  }
-
-  void matchTile( Tile& tile )
-  {
-    bool matched = false;
-    matched = checkSide( left, tile );
-    if ( matched ) return;
-
-    matched = checkSide( right, tile );
-    if ( matched ) return;
-
-    matched = checkSide( up, tile );
-    if ( matched ) return;
-
-    matched = checkSide( down, tile );
-    if ( matched ) return;
-  }
-
-  void modifyByNeis()
-  {
+    std::cout << "Player " << id_ << "'s deck: ";
+    for ( const auto& i : cards_ )
+      std::cout << i << ' ';
+    std::cout << std::endl;
 
   }
+
+  int id_;
+  std::vector<int> cards_;
 
 };
 
 
-void adventDay20()
+void adventDay22()
 {
   // Open numbers file
   std::ifstream myfile( FILE_PATH );
@@ -195,62 +76,73 @@ void adventDay20()
     return;
   }
 
-  std::map<int, Tile> mapTiles;
+  Player player1(1);
+  Player player2(2);
+
+
+  std::map<int, Player> players;
   std::string line;
-  std::regex expr( "Tile (\\d+):" );
+  std::regex expr( "Player (\\d+):" );
   std::smatch sm;
-  int tileId = -1;
+  int playerId = -1;
   while ( getline( myfile, line ) )
   {
+    if ( line == "" )
+    {
+      continue;
+    }
     if ( std::regex_search( line, sm, expr ) )
     {
-      tileId = std::stoi( sm[1].str() );
-      mapTiles[tileId] = Tile( tileId );
+      playerId = std::stoi( sm[1].str() );
+      continue;
     }
-    else if ( line != "" )
+    if ( playerId == 1 )
     {
-      mapTiles[tileId].tileInfo.push_back( line );
+      player1.addCard( std::stoi( line ) );
     }
-  }
-  if ( mapTiles.empty() )
-  {
-    std::cout << "Error, no valid input file" << std::endl;
-    return;
-  }
-
-
-  for ( auto& tile : mapTiles )
-  {
-    tile.second.computeSides();
-  }
-
-
-  for ( auto& tile1 : mapTiles )
-  {
-    for ( auto& tile2 : mapTiles )
+    else if ( playerId == 2 )
     {
-      if ( tile1.first == tile2.first )
-      {
-        continue;
-      }
-      tile1.second.matchTile( tile2.second );
+      player2.addCard( std::stoi( line ) );
     }
+  }
+  
+
+  for ( auto& player : players )
+  {
+    player.second.id_ = player.first;
   }
 
-  long long result = 1;
-  for ( auto& tile : mapTiles )
+  bool playing = true;
+  int round = 1;
+  while ( playing )
   {
-    if ( tile.second.isCorner() )
+    std::cout << "-- Round " << round << " --" << std::endl;
+
+    player1.printDeck();
+    player2.printDeck();
+
+    int play1 = player1.playCard();
+    int play2 = player2.playCard();
+
+    if ( play1 > play2 )
     {
-      result *= tile.second.tileId;
+      player1.addCards( std::vector<int>{play1, play2} );
+      std::cout << " Player 1 wins the round! " << std::endl;
     }
+    else
+    {
+      player2.addCards( std::vector<int>{play2, play1} );
+      std::cout << " Player 2 wins the round! " << std::endl;
+    }
+    playing = player1.hasCards() && player2.hasCards();
+    std::cout << " " << std::endl;
   }
+
+  std::cout << "== Post-game results ==" << std::endl;
+
+  long long result = player1.getResult() + player2.getResult();
   std::cout << "Part 1:  " << result << std::endl;
   
-  for ( auto& tile : mapTiles )
-  {
-    tile.modifyWithNeis();
-  }
 
 
   std::cout << "Part 2:  " << result << std::endl;
@@ -262,5 +154,5 @@ void adventDay20()
 
 int main( int argc, char* argv[] )
 {
-  adventDay20();
+  adventDay22();
 }
