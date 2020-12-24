@@ -61,6 +61,70 @@ std::pair<int, int> getCoord( std::string coord )
   return result;
 }
 
+
+int checkBlackNeis( const std::pair<int, int>& coord, std::map<std::pair<int, int>, bool>& field )
+{
+  int result = 0;
+  if ( field.find( std::pair<int, int>( coord.first + 2, coord.second ) ) != field.end() )
+  {
+    result += field.at( std::pair<int, int>( coord.first + 2, coord.second ) );
+  }
+  if ( field.find( std::pair<int, int>( coord.first - 2, coord.second ) ) != field.end() )
+  {
+    result += field.at( std::pair<int, int>( coord.first - 2, coord.second ) );
+  }
+  if ( field.find( std::pair<int, int>( coord.first + 1, coord.second + 1 ) ) != field.end() )
+  {
+    result += field.at( std::pair<int, int>( coord.first + 1, coord.second + 1 ) );
+  }
+  if ( field.find( std::pair<int, int>( coord.first + 1, coord.second - 1 ) ) != field.end() )
+  {
+    result += field.at( std::pair<int, int>( coord.first + 1, coord.second - 1 ) );
+  }
+  if ( field.find( std::pair<int, int>( coord.first - 1, coord.second + 1 ) ) != field.end() )
+  {
+    result += field.at( std::pair<int, int>( coord.first - 1, coord.second + 1 ) );
+  }
+  if ( field.find( std::pair<int, int>( coord.first - 1, coord.second - 1 ) ) != field.end() )
+  {
+    result += field.at( std::pair<int, int>( coord.first - 1, coord.second - 1 ) );
+  }
+  return result;
+}
+
+void addAllNeis( std::map<std::pair<int, int>, bool>& field )
+{
+  std::map<std::pair<int, int>, bool> auxMap( field );
+  for ( auto& tile : field )
+  {
+    if ( field.find( std::pair<int, int>( tile.first.first + 2, tile.first.second ) ) == field.end() )
+    {
+      auxMap[std::pair<int, int>( tile.first.first + 2, tile.first.second )] = false;
+    }
+    if ( field.find( std::pair<int, int>( tile.first.first - 2, tile.first.second ) ) == field.end() )
+    {
+      auxMap[std::pair<int, int>( tile.first.first - 2, tile.first.second )] = false;
+    }
+    if ( field.find( std::pair<int, int>( tile.first.first + 1, tile.first.second+1 ) ) == field.end() )
+    {
+      auxMap[std::pair<int, int>( tile.first.first + 1, tile.first.second+1 )] = false;
+    }
+    if ( field.find( std::pair<int, int>( tile.first.first + 1, tile.first.second-1 ) ) == field.end() )
+    {
+      auxMap[std::pair<int, int>( tile.first.first + 1, tile.first.second-1 )] = false;
+    }
+    if ( field.find( std::pair<int, int>( tile.first.first -1, tile.first.second+1 ) ) == field.end() )
+    {
+      auxMap[std::pair<int, int>( tile.first.first -1, tile.first.second+1 )] = false;
+    }
+    if ( field.find( std::pair<int, int>( tile.first.first - 1, tile.first.second -1) ) == field.end() )
+    {
+      auxMap[std::pair<int, int>( tile.first.first - 1, tile.first.second-1 )] = false;
+    }
+  }
+  field = auxMap;
+}
+
 void adventDay22()
 {
   // Open numbers file
@@ -112,7 +176,33 @@ void adventDay22()
   std::cout << std::endl;
   std::cout << std::endl;
   
-  
+  for ( int i = 0; i < 100; ++i )
+  {
+    addAllNeis( tileField );
+    std::map<std::pair<int, int>, bool> auxMap( tileField );
+    for ( auto& tile : tileField )
+    {
+      int blackNeis = checkBlackNeis( tile.first, tileField );
+      if ( tile.second && ( blackNeis == 0 || blackNeis > 2 ) )
+      {
+        auxMap[tile.first] = false;
+      }
+      if ( !tile.second && blackNeis == 2 )
+      {
+        auxMap[tile.first] = true;
+      }
+    }
+    tileField = auxMap;
+  }
+
+  result = 0;
+  for ( auto& tile : tileField )
+  {
+    if ( tile.second )
+    {
+      result++;
+    }
+  }
   std::cout << "Part 2:  " << result << std::endl;
   //std::cout << "Part 2:" << result << std::endl;
 
