@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <set>
 #include <map>
 #include <string>
 #include <algorithm>
@@ -12,180 +13,44 @@
 #include "resource.h"
 
 
-
-struct Tile
+struct Food
 {
-  int tileId;
-  std::vector<std::string> tileInfo;
-  typedef std::pair<std::string, int> side;
+  std::vector<std::string> ingredients;
+  std::vector<std::string> allergens;
 
-  side left;
-  side right;
-  side up;
-  side down;
-
-  Tile() {};
-  Tile( int tileId ) : tileId( tileId )
+  bool containAllergen( const std::string& aller ) const
   {
-    left = std::make_pair<std::string, int>( "", -1 );
-    right = std::make_pair<std::string, int>( "", -1 );
-    up = std::make_pair<std::string, int>( "", -1 );
-    down = std::make_pair<std::string, int>( "", -1 );
-  };
+    return std::find( allergens.begin(), allergens.end(), aller ) != allergens.end();
+  }
 
-  void rotate(const int l, const int r)
+  void removeAllergen( const std::string aller )
   {
-    std::vector<std::string> newTileInfo(tileInfo);
-    if ( l == 1 || r == 3 )
+    auto found = std::find( allergens.begin(), allergens.end(), aller );
+    if ( found != allergens.end() )
     {
-      for ( auto i = 0; i < tileInfo.size(); ++i )
-      {
-        for ( auto j = 0; j < tileInfo[i].size(); ++j )
-        {
-          newTileInfo[i][tileInfo.size() - 1 - j] = tileInfo[i][j];
-        }
-      }
-      left.second = up.second;
-      down.second = left.second;
-      right.second = down.second;
-      up.second = right.second;
-
-    }
-    if ( l == 2 || r == 2 )
-    {
-      for ( auto i = 0; i < tileInfo.size(); ++i )
-      {
-        for ( auto j = 0; j < tileInfo[i].size(); ++j )
-        {
-          newTileInfo[tileInfo.size() - 1 - i][tileInfo.size() - 1 - j] = tileInfo[i][j];
-        }
-      }
-
-      left.second = right.second;
-      down.second = up.second;
-      right.second = left.second;
-      up.second = down.second;
-    }
-    if ( l == 3 || r == 1 )
-    {
-      for ( auto i = 0; i < tileInfo.size(); ++i )
-      {
-        for ( auto j = 0; j < tileInfo[i].size(); ++j )
-        {
-          newTileInfo[tileInfo.size() - 1 - i][j] = tileInfo[i][j];
-        }
-      }
-      left.second = down.second;
-      down.second = right.second;
-      right.second = up.second;
-      up.second = left.second;
+      allergens.erase( found );
     }
   }
 
-  void flip( const int l, const int u )
+
+  bool containIngredient( const std::string& ingre ) const
   {
-    if ( l == 1 )
+    return std::find( ingredients.begin(), ingredients.end(), ingre ) != ingredients.end();
+  }
+
+  void removeIngredient( const std::string ingre )
+  {
+    auto found = std::find( ingredients.begin(), ingredients.end(), ingre );
+    if ( found != ingredients.end() )
     {
-      std::transform( tileInfo.begin(), tileInfo.end(), tileInfo.begin(), []( std::string& line ) 
-      {
-        std::reverse( line.begin(), line.end() );
-      } );
-
-      left.second = right.second;
-      right.second = left.second;
+      ingredients.erase( found );
     }
-    if ( u == 1 )
-    {
-      std::reverse( tileInfo.begin(), tileInfo.end() );
-
-      down.second = up.second;
-      up.second = down.second;
-    }
-  }
-
-  bool isCorner() const
-  {
-    int countSides = 0;
-    countSides += left.second != -1;
-    countSides += right.second != -1;
-    countSides += up.second != -1;
-    countSides += down.second != -1;
-
-    return countSides == 2;
-  }
-
-  void computeSides()
-  {
-    up.first = tileInfo[0];
-    down.first = tileInfo[tileInfo.size() - 1];
-    left.first.clear();
-    right.first.clear();
-    for ( auto& row : tileInfo )
-    {
-      left.first.push_back( row[0] );
-      right.first.push_back( row[row.size()-1] );
-    }
-  }
-
-  bool checkSide( side& s, Tile& t )
-  {
-    if ( s.second == -1 )
-    {
-      std::string reverse = s.first;
-      std::reverse( reverse.begin(), reverse.end() );
-      if ( ( t.left.second == -1 ) && ( ( s.first == t.left.first ) || ( reverse == t.left.first ) ) )
-      {
-        s.second = t.tileId;
-        t.left.second = tileId;
-        return true;
-      }
-      if ( ( t.right.second == -1 ) && ( ( s.first == t.right.first ) || ( reverse == t.right.first ) ) )
-      {
-        s.second = t.tileId;
-        t.right.second = tileId;
-        return true;
-      }
-      if ( ( t.up.second == -1 ) && ( ( s.first == t.up.first ) || ( reverse == t.up.first ) ) )
-      {
-        s.second = t.tileId;
-        t.up.second = tileId;
-        return true;
-      }
-      if ( ( t.down.second == -1 ) && ( ( s.first == t.down.first ) || ( reverse == t.down.first ) ) )
-      {
-        s.second = t.tileId;
-        t.down.second = tileId;
-        return true;
-      }
-    }
-    return false;
-  }
-
-  void matchTile( Tile& tile )
-  {
-    bool matched = false;
-    matched = checkSide( left, tile );
-    if ( matched ) return;
-
-    matched = checkSide( right, tile );
-    if ( matched ) return;
-
-    matched = checkSide( up, tile );
-    if ( matched ) return;
-
-    matched = checkSide( down, tile );
-    if ( matched ) return;
-  }
-
-  void modifyByNeis()
-  {
-
   }
 
 };
 
 
-void adventDay20()
+void adventDay21()
 {
   // Open numbers file
   std::ifstream myfile( FILE_PATH );
@@ -195,72 +60,112 @@ void adventDay20()
     return;
   }
 
-  std::map<int, Tile> mapTiles;
+  std::vector<Food> foods;
+  std::set<std::string> ingredients;
+  std::set<std::string> allergens;
   std::string line;
-  std::regex expr( "Tile (\\d+):" );
+  std::regex expr( "(.*) \\(contains (.*)\\)" );
   std::smatch sm;
-  int tileId = -1;
   while ( getline( myfile, line ) )
   {
     if ( std::regex_search( line, sm, expr ) )
     {
-      tileId = std::stoi( sm[1].str() );
-      mapTiles[tileId] = Tile( tileId );
+      Food food;
+      // Get ingredients
+      std::stringstream ssIng( sm[1].str() );
+      std::string valueIng;
+      while ( getline( ssIng, valueIng, ' ' ) )
+      {
+        food.ingredients.push_back( valueIng );
+        ingredients.insert( valueIng );
+      }
+      // Get allergens
+      std::stringstream ssA( sm[2].str() );
+      std::string valueA;
+      while ( getline( ssA, valueA, ',' ) )
+      {
+        if ( valueA.front() == ' ' ) valueA.erase( valueA.begin() );
+        food.allergens.push_back( valueA );
+        allergens.insert( valueA );
+      }
+      foods.push_back( food );
     }
-    else if ( line != "" )
-    {
-      mapTiles[tileId].tileInfo.push_back( line );
-    }
+
   }
-  if ( mapTiles.empty() )
+  if ( foods.empty() )
   {
     std::cout << "Error, no valid input file" << std::endl;
     return;
   }
 
+  std::map<std::string, std::string> listAllergens;
 
-  for ( auto& tile : mapTiles )
+  const int ingredientsSize = ingredients.size();
+  std::set<std::string> noAllergenIngre( ingredients );
+  std::vector<Food> auxFoods( foods );
+  while ( noAllergenIngre.size() != ingredientsSize - allergens.size() )
   {
-    tile.second.computeSides();
-  }
-
-
-  for ( auto& tile1 : mapTiles )
-  {
-    for ( auto& tile2 : mapTiles )
+    for ( const auto& aller : allergens )
     {
-      if ( tile1.first == tile2.first )
+      std::vector<std::string> auxIngrAller;
+      for ( auto& f : auxFoods )
       {
-        continue;
+        if ( f.allergens.empty() )
+          continue;
+
+        if ( !f.containAllergen( aller ) )
+          continue;
+
+        if ( auxIngrAller.empty() )
+        {
+          auxIngrAller = f.ingredients;
+        }
+        else
+        {
+          auxIngrAller.erase( std::remove_if( auxIngrAller.begin(), auxIngrAller.end(), [&]( auto const& x )
+          {
+            return !f.containIngredient( x );
+          } ), auxIngrAller.end() );
+        }
+
       }
-      tile1.second.matchTile( tile2.second );
+      if ( auxIngrAller.size() == 1 )
+      {
+        // Remove ingredient from full list
+        noAllergenIngre.erase( auxIngrAller.front() );
+        listAllergens[aller] = auxIngrAller.front();
+        for ( auto& f : auxFoods )
+        {
+          f.removeIngredient( auxIngrAller.front() );
+          f.removeAllergen( aller );
+        }
+      }
     }
   }
 
-  long long result = 1;
-  for ( auto& tile : mapTiles )
+  int result=0;
+  for ( auto& f : auxFoods )
   {
-    if ( tile.second.isCorner() )
-    {
-      result *= tile.second.tileId;
-    }
+    result += f.ingredients.size();
   }
   std::cout << "Part 1:  " << result << std::endl;
-  
-  for ( auto& tile : mapTiles )
+
+
+  std::vector<std::string> allergensV( allergens.begin(), allergens.end() );
+  std::sort( allergensV.begin(), allergensV.end() );
+  std::stringstream resultStr;
+  for ( const auto& a : allergensV )
   {
-    tile.modifyWithNeis();
+    resultStr << listAllergens[a] << ",";
   }
-
-
-  std::cout << "Part 2:  " << result << std::endl;
-  //std::cout << "Part 2:" << result << std::endl;
-
+  
+  std::cout << "Part 2:  " << resultStr.str() << std::endl;
+  
 }
 
 
 
 int main( int argc, char* argv[] )
 {
-  adventDay20();
+  adventDay21();
 }
