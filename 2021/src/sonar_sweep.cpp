@@ -1,3 +1,5 @@
+#include "sonar_sweep.h"
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -9,7 +11,7 @@
 void sonarSweepPart1()
 {
   // Open numbers file
-  std::ifstream myfile( FILE_PATH );
+  std::ifstream myfile( DAY1_PATH );
   if ( !myfile.is_open() )
   {
     std::cout << "Error, no file founded" << std::endl;
@@ -45,7 +47,7 @@ void sonarSweepPart1()
 void sonarSweepPart2()
 {
   // Open numbers file
-  std::ifstream myfile(FILE_PATH);
+  std::ifstream myfile(DAY1_PATH);
   if (!myfile.is_open())
   {
     std::cout << "Error, no file founded" << std::endl;
