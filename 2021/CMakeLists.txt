@@ -9,7 +9,7 @@ project("AdventOfCode_2021"
 set(TARGET_NAME AoC)
 
 # Set minimum c++ version
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 20)
 
 
 ################
@@ -22,12 +22,21 @@ set( INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include )
 
 #Header files                       
 include_directories( ${INCLUDE_DIR} )
+file( GLOB HEADER_FILES
+  #Manually add all header files here    
+  ${INCLUDE_DIR}/adventdays_fwd.h
+  ${INCLUDE_DIR}/ansi_colors.h
+  ${INCLUDE_DIR}/sonar_sweep.h
+  ${INCLUDE_DIR}/dive.h
+)
 
 #Source files
 file( GLOB SOURCE_FILES
   #Manually add all source files here
   #Day problems
   ${SOURCES_DIR}/sonar_sweep.cpp  
+  ${SOURCES_DIR}/dive.cpp
+  ${SOURCES_DIR}/binary_diagnostic.cpp
   #Main
   ${SOURCES_DIR}/main.cpp
 )
@@ -50,4 +59,10 @@ list( APPEND GENERATED_FILES
 #Create executable
 ###################
 
-add_executable( ${TARGET_NAME} ${SOURCE_FILES} ${GENERATED_FILES} )
+#add_library(add ${SOURCES} ${INCLUDES})
+
+add_executable( ${TARGET_NAME} ${GENERATED_FILES} ${HEADER_FILES} ${SOURCE_FILES} )
+
+#target_link_libraries(${TARGET_NAME} add)
+
+#add_subdirectory( tests )

@@ -14,13 +14,14 @@
 
 void paintAdventCalendar()
 {
-  printf(HGRN"Advent of Code\n" GRN"\ty(" HGRN"2021" GRN")" reset "\n");
+  printf( HGRN"Advent of Code\n" GRN"\ty(" HGRN"2021" GRN")" reset "\n" );
 
-  printf(HBLK "                      ~   " CYN "~" HBLK"  ~ " CYN "~" HBLK "~ " CYN "~" HBLK "~" CYN "~~" HBLK "~" CYN "~~~~~~~~~~");
-  printf( reset "    1  " HYEL "**" reset "\n");
-  printf(HBLK "                                      '" CYN ". ' " YEL "..''''");
-  printf( reset "    2  " HYEL "**" reset "\n");
-  std::cout << "                                                   " << "  " << "3" << std::endl;
+  printf( HBLK "                      ~   " CYN "~" HBLK"  ~ " CYN "~" HBLK "~ " CYN "~" HBLK "~" CYN "~~" HBLK "~" CYN "~~~~~~~~~~" );
+  printf( reset "    1  " HYEL "**" reset "\n" );
+  printf( HBLK "                                      '" CYN ". ' " YEL "..''''" );
+  printf( reset "    2  " HYEL "**" reset "\n" );
+  printf( "                                                 " );
+  printf( reset "    3  " HYEL "**" reset "\n" );
   std::cout << "                                                   " << "  " << "4" << std::endl;
   std::cout << "                                                   " << "  " << "5" << std::endl;
   std::cout << "                                                   " << "  " << "6" << std::endl;
@@ -47,7 +48,7 @@ void paintAdventCalendar()
 
 int getDay()
 {
-  std::cout << "Introduce el día que quieres ejecutar:";
+  std::cout << "Introduce el dia que quieres ejecutar:";
   int day;
   std::cin >> day;
   std::cout << std::endl;
@@ -67,6 +68,10 @@ int main( int argc, char* argv[] )
     case 2:
       divePart1();
       divePart2();
+      break;
+    case 3:
+      //binaryDiagnosticPart1();
+      binaryDiagnosticPart2();
       break;
     default:
       break;
