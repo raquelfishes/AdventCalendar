@@ -70,8 +70,12 @@ int main( int argc, char* argv[] )
       divePart2();
       break;
     case 3:
-      //binaryDiagnosticPart1();
+      binaryDiagnosticPart1();
       binaryDiagnosticPart2();
+      break;
+    case 4:
+      giantSquidPart1();
+      giantSquidPart2();
       break;
     default:
       break;

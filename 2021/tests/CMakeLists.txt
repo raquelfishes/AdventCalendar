@@ -9,7 +9,7 @@ project("AdventOfCode_2021"
 set(TARGET_NAME AoC)
 
 # Set minimum c++ version
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 14)
 
 
 ################
@@ -36,8 +36,6 @@ file( GLOB SOURCE_FILES
   #Day problems
   ${SOURCES_DIR}/sonar_sweep.cpp  
   ${SOURCES_DIR}/dive.cpp
-  ${SOURCES_DIR}/binary_diagnostic.cpp
-  ${SOURCES_DIR}/giant_squid.cpp
   #Main
   ${SOURCES_DIR}/main.cpp
 )
@@ -60,10 +58,4 @@ list( APPEND GENERATED_FILES
 #Create executable
 ###################
 
-#add_library(add ${SOURCES} ${INCLUDES})
-
 add_executable( ${TARGET_NAME} ${GENERATED_FILES} ${HEADER_FILES} ${SOURCE_FILES} )
-
-#target_link_libraries(${TARGET_NAME} add)
-
-#add_subdirectory( tests )
