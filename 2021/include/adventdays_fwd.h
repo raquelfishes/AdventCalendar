@@ -5,6 +5,8 @@
 void binaryDiagnosticPart1();
 void binaryDiagnosticPart2();
 
-
 void giantSquidPart1();
 void giantSquidPart2();
+
+void hydrothermalVenturePart1();
+void hydrothermalVenturePart2();

@@ -24,8 +24,11 @@ set( INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include )
 include_directories( ${INCLUDE_DIR} )
 file( GLOB HEADER_FILES
   #Manually add all header files here    
-  ${INCLUDE_DIR}/adventdays_fwd.h
+  # General
+  ${INCLUDE_DIR}/utils.h
   ${INCLUDE_DIR}/ansi_colors.h
+  # Day problems
+  ${INCLUDE_DIR}/adventdays_fwd.h
   ${INCLUDE_DIR}/sonar_sweep.h
   ${INCLUDE_DIR}/dive.h
 )
@@ -33,13 +36,15 @@ file( GLOB HEADER_FILES
 #Source files
 file( GLOB SOURCE_FILES
   #Manually add all source files here
-  #Day problems
+  # General
+  ${SOURCES_DIR}/main.cpp
+  ${SOURCES_DIR}/utils.cpp
+  # Day problems
   ${SOURCES_DIR}/sonar_sweep.cpp  
   ${SOURCES_DIR}/dive.cpp
   ${SOURCES_DIR}/binary_diagnostic.cpp
   ${SOURCES_DIR}/giant_squid.cpp
-  #Main
-  ${SOURCES_DIR}/main.cpp
+  ${SOURCES_DIR}/hydrothermal_venture.cpp
 )
 
 

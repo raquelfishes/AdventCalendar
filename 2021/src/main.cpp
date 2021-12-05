@@ -77,6 +77,10 @@ int main( int argc, char* argv[] )
       giantSquidPart1();
       giantSquidPart2();
       break;
+    case 5:
+      hydrothermalVenturePart1();
+      hydrothermalVenturePart2();
+      break;
     default:
       break;
   }
