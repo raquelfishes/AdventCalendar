@@ -45,6 +45,7 @@ file( GLOB SOURCE_FILES
   ${SOURCES_DIR}/binary_diagnostic.cpp
   ${SOURCES_DIR}/giant_squid.cpp
   ${SOURCES_DIR}/hydrothermal_venture.cpp
+  ${SOURCES_DIR}/lanternfish.cpp
 )
 
 

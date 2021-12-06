@@ -10,6 +10,7 @@
 
 bool splitString(const std::string value, const char c, std::vector<std::string>& splited)
 {
+  splited.clear();
   std::stringstream ssRange(value);
   std::string splitValue;
   while (getline(ssRange, splitValue, ','))

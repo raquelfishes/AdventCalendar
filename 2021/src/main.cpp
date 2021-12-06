@@ -81,6 +81,10 @@ int main( int argc, char* argv[] )
       hydrothermalVenturePart1();
       hydrothermalVenturePart2();
       break;
+    case 6:
+      lanternfishPart1();
+      lanternfishPart2();
+      break;
     default:
       break;
   }

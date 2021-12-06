@@ -10,3 +10,6 @@ void giantSquidPart2();
 
 void hydrothermalVenturePart1();
 void hydrothermalVenturePart2();
+
+void lanternfishPart1();
+void lanternfishPart2();
