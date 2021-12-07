@@ -13,3 +13,6 @@ void hydrothermalVenturePart2();
 
 void lanternfishPart1();
 void lanternfishPart2();
+
+void theTreacheryOfWhalesPart1();
+void theTreacheryOfWhalesPart2();

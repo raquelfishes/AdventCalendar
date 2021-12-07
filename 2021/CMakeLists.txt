@@ -46,6 +46,7 @@ file( GLOB SOURCE_FILES
   ${SOURCES_DIR}/giant_squid.cpp
   ${SOURCES_DIR}/hydrothermal_venture.cpp
   ${SOURCES_DIR}/lanternfish.cpp
+  ${SOURCES_DIR}/theTreacheryOfWhales.cpp
 )
 
 
