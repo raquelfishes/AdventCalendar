@@ -16,3 +16,7 @@ void lanternfishPart2();
 
 void theTreacheryOfWhalesPart1();
 void theTreacheryOfWhalesPart2();
+
+void sevenSegmentSearchPart1();
+void sevenSegmentSearchPart2();
+

@@ -89,6 +89,10 @@ int main( int argc, char* argv[] )
       theTreacheryOfWhalesPart1();
       theTreacheryOfWhalesPart2();
       break;
+    case 8:
+      sevenSegmentSearchPart1();
+      sevenSegmentSearchPart2();
+      break;
     default:
       break;
   }

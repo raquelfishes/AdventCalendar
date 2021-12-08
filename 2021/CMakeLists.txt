@@ -47,6 +47,7 @@ file( GLOB SOURCE_FILES
   ${SOURCES_DIR}/hydrothermal_venture.cpp
   ${SOURCES_DIR}/lanternfish.cpp
   ${SOURCES_DIR}/theTreacheryOfWhales.cpp
+  ${SOURCES_DIR}/sevenSegmentSearch.cpp
 )
 
 

@@ -13,7 +13,7 @@ bool splitString(const std::string value, const char c, std::vector<std::string>
   splited.clear();
   std::stringstream ssRange(value);
   std::string splitValue;
-  while (getline(ssRange, splitValue, ','))
+  while (getline(ssRange, splitValue, c))
   {
     splited.push_back(splitValue);
   }
