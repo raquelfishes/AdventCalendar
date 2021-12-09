@@ -20,3 +20,6 @@ void theTreacheryOfWhalesPart2();
 void sevenSegmentSearchPart1();
 void sevenSegmentSearchPart2();
 
+void smokeBasinPart1();
+void smokeBasinPart2();
+

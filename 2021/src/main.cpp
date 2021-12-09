@@ -93,6 +93,10 @@ int main( int argc, char* argv[] )
       sevenSegmentSearchPart1();
       sevenSegmentSearchPart2();
       break;
+    case 9:
+      smokeBasinPart1();
+      smokeBasinPart2();
+      break;
     default:
       break;
   }
