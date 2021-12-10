@@ -31,3 +31,5 @@ bool readDocument(const std::string path, std::vector<T>& values)
     values.push_back(T(line));
   }
 }
+
+int char2int(const char c);

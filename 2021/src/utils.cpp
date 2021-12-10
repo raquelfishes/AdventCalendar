@@ -34,3 +34,8 @@ bool splitByRegex(const std::string line, const std::regex expr, std::vector<std
   }
   return false;
 }
+
+int char2int(const char c)
+{
+  return (c - '0');
+}

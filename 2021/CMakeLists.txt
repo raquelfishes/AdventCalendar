@@ -48,6 +48,7 @@ file( GLOB SOURCE_FILES
   ${SOURCES_DIR}/lanternfish.cpp
   ${SOURCES_DIR}/theTreacheryOfWhales.cpp
   ${SOURCES_DIR}/sevenSegmentSearch.cpp
+  ${SOURCES_DIR}/smokeBasin.cpp
 )
 
 
