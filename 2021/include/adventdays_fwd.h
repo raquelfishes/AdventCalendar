@@ -23,3 +23,6 @@ void sevenSegmentSearchPart2();
 void smokeBasinPart1();
 void smokeBasinPart2();
 
+void syntaxScoringPart1();
+void syntaxScoringPart2();
+

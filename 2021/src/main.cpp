@@ -97,6 +97,10 @@ int main( int argc, char* argv[] )
       smokeBasinPart1();
       smokeBasinPart2();
       break;
+    case 10:
+      syntaxScoringPart1();
+      syntaxScoringPart2();
+      break;
     default:
       break;
   }

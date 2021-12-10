@@ -49,6 +49,7 @@ file( GLOB SOURCE_FILES
   ${SOURCES_DIR}/theTreacheryOfWhales.cpp
   ${SOURCES_DIR}/sevenSegmentSearch.cpp
   ${SOURCES_DIR}/smokeBasin.cpp
+  ${SOURCES_DIR}/syntaxScoring.cpp
 )
 
 
