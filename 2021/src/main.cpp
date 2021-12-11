@@ -101,6 +101,10 @@ int main( int argc, char* argv[] )
       syntaxScoringPart1();
       syntaxScoringPart2();
       break;
+    case 11:
+      dumboOctopusPart1();
+      dumboOctopusPart2();
+      break;
     default:
       break;
   }

@@ -26,3 +26,7 @@ void smokeBasinPart2();
 void syntaxScoringPart1();
 void syntaxScoringPart2();
 
+void dumboOctopusPart1();
+void dumboOctopusPart2();
+
+

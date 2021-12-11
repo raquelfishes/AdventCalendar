@@ -46,10 +46,11 @@ file( GLOB SOURCE_FILES
   ${SOURCES_DIR}/giant_squid.cpp
   ${SOURCES_DIR}/hydrothermal_venture.cpp
   ${SOURCES_DIR}/lanternfish.cpp
-  ${SOURCES_DIR}/theTreacheryOfWhales.cpp
-  ${SOURCES_DIR}/sevenSegmentSearch.cpp
-  ${SOURCES_DIR}/smokeBasin.cpp
-  ${SOURCES_DIR}/syntaxScoring.cpp
+  ${SOURCES_DIR}/the_treachery_of_whales.cpp
+  ${SOURCES_DIR}/seven_segment_search.cpp
+  ${SOURCES_DIR}/smoke_basin.cpp
+  ${SOURCES_DIR}/syntax_scoring.cpp
+  ${SOURCES_DIR}/dumbo_octopus.cpp
 )
 
 
