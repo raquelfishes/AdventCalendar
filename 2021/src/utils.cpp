@@ -39,3 +39,13 @@ int char2int(const char c)
 {
   return (c - '0');
 }
+
+bool isUppercase(const std::string& s)
+{
+  return std::all_of(s.begin(), s.end(), [](unsigned char c) { return std::isupper(c); });
+}
+
+bool isLowercase(const std::string& s)
+{
+  return std::all_of(s.begin(), s.end(), [](unsigned char c) { return !std::isupper(c); });
+}

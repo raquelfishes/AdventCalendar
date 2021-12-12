@@ -29,4 +29,7 @@ void syntaxScoringPart2();
 void dumboOctopusPart1();
 void dumboOctopusPart2();
 
+void passagePathingPart1();
+void passagePathingPart2();
+
 

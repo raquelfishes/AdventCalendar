@@ -33,3 +33,6 @@ bool readDocument(const std::string path, std::vector<T>& values)
 }
 
 int char2int(const char c);
+
+bool isUppercase(const std::string& s);
+bool isLowercase(const std::string& s);

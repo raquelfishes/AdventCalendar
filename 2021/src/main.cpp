@@ -105,6 +105,10 @@ int main( int argc, char* argv[] )
       dumboOctopusPart1();
       dumboOctopusPart2();
       break;
+    case 12:
+      passagePathingPart1();
+      passagePathingPart2();
+      break;
     default:
       break;
   }
