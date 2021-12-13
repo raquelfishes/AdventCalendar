@@ -32,4 +32,9 @@ void dumboOctopusPart2();
 void passagePathingPart1();
 void passagePathingPart2();
 
+void transparentOrigamiPart1();
+void transparentOrigamiPart2();
+
+
+
 

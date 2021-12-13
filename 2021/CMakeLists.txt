@@ -52,6 +52,7 @@ file( GLOB SOURCE_FILES
   ${SOURCES_DIR}/syntax_scoring.cpp
   ${SOURCES_DIR}/dumbo_octopus.cpp
   ${SOURCES_DIR}/passage_pathing.cpp
+  ${SOURCES_DIR}/transparent_origami.cpp
 )
 
 

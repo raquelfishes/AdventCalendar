@@ -14,6 +14,8 @@ bool splitString(const std::string value, const char c, std::vector<std::string>
 
 bool splitByRegex(const std::string line, const std::regex regex, std::vector<std::string>& values);
 
+bool matchRegex( const std::string line, const std::string regex);
+
 template<typename T>
 bool readDocument(const std::string path, std::vector<T>& values)
 {
@@ -30,6 +32,8 @@ bool readDocument(const std::string path, std::vector<T>& values)
   {
     values.push_back(T(line));
   }
+
+  myfile.close();
 }
 
 int char2int(const char c);

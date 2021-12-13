@@ -109,6 +109,10 @@ int main( int argc, char* argv[] )
       passagePathingPart1();
       passagePathingPart2();
       break;
+    case 13:
+      //transparentOrigamiPart1();
+      transparentOrigamiPart2();
+      break;
     default:
       break;
   }

@@ -5,6 +5,7 @@
 #include <fstream>
 
 
+
  
 
 
@@ -30,6 +31,17 @@ bool splitByRegex(const std::string line, const std::regex expr, std::vector<std
     {
       values.push_back(sm);
     }
+    return true;
+  }
+  return false;
+}
+
+bool matchRegex( const std::string line, const std::string expr )
+{
+  std::regex exp( expr );
+  std::smatch smatch;
+  if ( std::regex_search( line, smatch, exp ) )
+  {
     return true;
   }
   return false;
