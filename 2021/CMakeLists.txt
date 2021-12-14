@@ -53,6 +53,7 @@ file( GLOB SOURCE_FILES
   ${SOURCES_DIR}/dumbo_octopus.cpp
   ${SOURCES_DIR}/passage_pathing.cpp
   ${SOURCES_DIR}/transparent_origami.cpp
+  ${SOURCES_DIR}/extended_polymerization.cpp
 )
 
 

@@ -22,6 +22,11 @@ bool splitString(const std::string value, const char c, std::vector<std::string>
   return true;
 }
 
+bool splitByRegex( const std::string line, const std::string expr, std::vector<std::string>& values )
+{
+  return splitByRegex( line, std::regex( expr ), values );
+}
+
 bool splitByRegex(const std::string line, const std::regex expr, std::vector<std::string>& values)
 {
   std::smatch smatch;
@@ -61,3 +66,5 @@ bool isLowercase(const std::string& s)
 {
   return std::all_of(s.begin(), s.end(), [](unsigned char c) { return !std::isupper(c); });
 }
+
+

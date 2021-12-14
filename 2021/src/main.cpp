@@ -110,8 +110,12 @@ int main( int argc, char* argv[] )
       passagePathingPart2();
       break;
     case 13:
-      //transparentOrigamiPart1();
+      transparentOrigamiPart1();
       transparentOrigamiPart2();
+      break;
+    case 14:
+      extendedPolymerizationPart1();
+      extendedPolymerizationPart2();
       break;
     default:
       break;

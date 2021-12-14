@@ -11,7 +11,7 @@
 
 bool splitString(const std::string value, const char c, std::vector<std::string>& splited );
 
-
+bool splitByRegex( const std::string line, const std::string regex, std::vector<std::string>& values );
 bool splitByRegex(const std::string line, const std::regex regex, std::vector<std::string>& values);
 
 bool matchRegex( const std::string line, const std::string regex);
@@ -40,3 +40,5 @@ int char2int(const char c);
 
 bool isUppercase(const std::string& s);
 bool isLowercase(const std::string& s);
+
+

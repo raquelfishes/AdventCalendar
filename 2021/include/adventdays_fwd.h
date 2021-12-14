@@ -35,6 +35,9 @@ void passagePathingPart2();
 void transparentOrigamiPart1();
 void transparentOrigamiPart2();
 
+void extendedPolymerizationPart1();
+void extendedPolymerizationPart2();
+
 
 
 
