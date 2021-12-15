@@ -38,6 +38,9 @@ void transparentOrigamiPart2();
 void extendedPolymerizationPart1();
 void extendedPolymerizationPart2();
 
+void chitonPart1();
+void chitonPart2();
+
 
 
 

@@ -117,6 +117,10 @@ int main( int argc, char* argv[] )
       extendedPolymerizationPart1();
       extendedPolymerizationPart2();
       break;
+    case 15:
+      chitonPart1();
+      chitonPart2();
+      break;
     default:
       break;
   }

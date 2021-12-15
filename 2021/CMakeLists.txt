@@ -31,6 +31,7 @@ file( GLOB HEADER_FILES
   ${INCLUDE_DIR}/adventdays_fwd.h
   ${INCLUDE_DIR}/sonar_sweep.h
   ${INCLUDE_DIR}/dive.h
+  ${INCLUDE_DIR}/grid.h
 )
 
 #Source files
@@ -54,6 +55,7 @@ file( GLOB SOURCE_FILES
   ${SOURCES_DIR}/passage_pathing.cpp
   ${SOURCES_DIR}/transparent_origami.cpp
   ${SOURCES_DIR}/extended_polymerization.cpp
+  ${SOURCES_DIR}/chiton.cpp
 )
 
 
