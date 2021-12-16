@@ -55,13 +55,24 @@ void initializeGrid( GridI& grid, const std::vector<std::string>& str )
 float calculateH( const int x, const int y, const GridI& grid )
 {
   // Compute as Euclidean distance
-  return std::sqrt( std::pow( x - ( grid.sizeX - 1 ), 2 ) + 
-                    std::pow( y - ( grid.sizeY - 1 ), 2 ) );
+  return std::sqrt( std::pow( ( grid.sizeX - 1 ) - x , 2 ) +
+                    std::pow( ( grid.sizeY - 1 ) - y , 2 ) );
 }
 
 bool isDestination( const int x, const int y, GridI& grid )
 {
   return ( x == grid.sizeX - 1 ) && ( y == grid.sizeY - 1 );
+}
+
+void markVisitedPath( GridI& grid, const std::vector<Node>& path )
+{
+  grid.visited.clear();
+  grid.visited.resize( grid.values.size(), false );
+  std::for_each( path.begin(), path.end(), [&grid] ( auto n )
+  {
+    int id = grid.getIndex( n.x, n.y );
+    grid.visited[id] = true;
+  } );
 }
 
 void aStarPathFinding( GridI& grid )
@@ -105,7 +116,12 @@ void aStarPathFinding( GridI& grid )
             newNode.parentY = auxNode.y;
             closedList.push_back( newNode );
             grid.visited[newIndex] = true;
+            markVisitedPath( grid, closedList );
             return;
+          }
+          if ( grid.isDiagonal( auxNode.x, auxNode.y, newX, newY ) )
+          {
+            continue;
           }
           if ( !grid.visited[newIndex] )
           {
@@ -114,7 +130,7 @@ void aStarPathFinding( GridI& grid )
             float fNew = gNew + hNew;
 
             auto nextOpen = std::min_element( openList.begin(), openList.end() );
-            if ( nextOpen != openList.end() && nextOpen->fCost < fNew )
+            if ( nextOpen != openList.end() && nextOpen->fCost <= fNew )
             {
               continue;
             }

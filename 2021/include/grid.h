@@ -68,6 +68,16 @@ public:
     return ( index >= 0 ) && ( index < ( sizeX*sizeY ) );
   }
 
+  bool isDiagonal( const coord p1, const coord p2 )
+  {
+    return isDiagonal( p1.first, p1.second, p2.first, p2.second );
+  }
+
+  bool isDiagonal( const int x1, const int y1, const int x2, const int y2 )
+  {
+    return ( std::abs( x1 - x2 ) && std::abs( y1 - y2 ) );
+  }
+
   void printGrid()
   {
     for ( int i = 0; i < sizeX; ++i )
