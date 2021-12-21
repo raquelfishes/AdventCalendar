@@ -121,6 +121,10 @@ int main( int argc, char* argv[] )
       chitonPart1();
       chitonPart2();
       break;
+    case 21:
+      diracDicePart1();
+      diracDicePart2();
+      break;
     default:
       break;
   }

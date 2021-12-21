@@ -56,6 +56,7 @@ file( GLOB SOURCE_FILES
   ${SOURCES_DIR}/transparent_origami.cpp
   ${SOURCES_DIR}/extended_polymerization.cpp
   ${SOURCES_DIR}/chiton.cpp
+  ${SOURCES_DIR}/dirac_dice.cpp
 )
 
 

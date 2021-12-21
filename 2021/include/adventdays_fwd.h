@@ -2,6 +2,7 @@
 #include "sonar_sweep.h"
 #include "dive.h"
 
+//
 void binaryDiagnosticPart1();
 void binaryDiagnosticPart2();
 
@@ -40,6 +41,10 @@ void extendedPolymerizationPart2();
 
 void chitonPart1();
 void chitonPart2();
+
+// Day 21
+void diracDicePart1();
+void diracDicePart2();
 
 
 
