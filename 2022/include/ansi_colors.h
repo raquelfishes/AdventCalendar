@@ -72,3 +72,63 @@
 
 //Reset
 #define reset "\x1b[0m"
+
+void testColors()
+{
+printf( BLK   "BLK"   reset "\n" );
+printf( BBLK  "BBLK"  reset "\n" );
+printf( UBLK  "UBLK"  reset "\n" );
+printf( BLKB  "BLKB"  reset "\n" );
+printf( BLKHB "BLKHB" reset "\n" );
+printf( HBLK  "HBLK"  reset "\n" );
+printf( BHBLK "BHBLK" reset "\n" );
+printf( RED   "RED"   reset "\n" );
+printf( BRED  "BRED"  reset "\n" );
+printf( URED  "URED"  reset "\n" );
+printf( REDB  "REDB"  reset "\n" );
+printf( REDHB "REDHB" reset "\n" );
+printf( HRED  "HRED"  reset "\n" );
+printf( BHRED "BHRED" reset "\n" );
+printf( GRN   "GRN"   reset "\n" );
+printf( BGRN  "BGRN"  reset "\n" );
+printf( UGRN  "UGRN"  reset "\n" );
+printf( GRNB  "GRNB"  reset "\n" );
+printf( GRNHB "GRNHB" reset "\n" );
+printf( HGRN  "HGRN"  reset "\n" );
+printf( BHGRN "BHGRN" reset "\n" );
+printf( YEL   "YEL"   reset "\n" );
+printf( BYEL  "BYEL"  reset "\n" );
+printf( UYEL  "UYEL"  reset "\n" );
+printf( YELB  "YELB"  reset "\n" );
+printf( YELHB "YELHB" reset "\n" );
+printf( HYEL  "HYEL"  reset "\n" );
+printf( BHYEL "BHYEL" reset "\n" );
+printf( BLU   "BLU"   reset "\n" );
+printf( BBLU  "BBLU"  reset "\n" );
+printf( UBLU  "UBLU"  reset "\n" );
+printf( BLUB  "BLUB"  reset "\n" );
+printf( BLUHB "BLUHB" reset "\n" );
+printf( HBLU  "HBLU"  reset "\n" );
+printf( BHBLU "BHBLU" reset "\n" );
+printf( MAG   "MAG"   reset "\n" );
+printf( BMAG  "BMAG"  reset "\n" );
+printf( UMAG  "UMAG"  reset "\n" );
+printf( MAGB  "MAGB"  reset "\n" );
+printf( MAGHB "MAGHB" reset "\n" );
+printf( HMAG  "HMAG"  reset "\n" );
+printf( BHMAG "BHMAG" reset "\n" );
+printf( CYN   "CYN"   reset "\n" );
+printf( BCYN  "BCYN"  reset "\n" );
+printf( UCYN  "UCYN"  reset "\n" );
+printf( CYNB  "CYNB"  reset "\n" );
+printf( CYNHB "CYNHB" reset "\n" );
+printf( HCYN  "HCYN"  reset "\n" );
+printf( BHCYN "BHCYN" reset "\n" );
+printf( WHT   "WHT"   reset "\n" );
+printf( BWHT  "BWHT"  reset "\n" );
+printf( UWHT  "UWHT"  reset "\n" );
+printf( WHTB  "WHTB"  reset "\n" );
+printf( WHTHB "WHTHB" reset "\n" );
+printf( HWHT  "HWHT"  reset "\n" );
+printf( BHWHT "BHWHT" reset "\n" );
+}

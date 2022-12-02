@@ -1,12 +1,4 @@
-#include "sonar_sweep.h"
-
-#include <iostream>
-#include <fstream>
-#include <vector>
-#include <string>
-#include <algorithm>
-#include <numeric>
-
+#include "std_includes.h"
 #include "resource.h"
 
 

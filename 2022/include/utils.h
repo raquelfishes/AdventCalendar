@@ -1,12 +1,7 @@
 #pragma once
 
 
-#include <iostream>
-#include <sstream>
-#include <fstream>
-#include <vector>
-#include <string>
-#include <regex>
+#include "std_includes.h"
 
 
 bool splitString(const std::string value, const char c, std::vector<std::string>& splited );
