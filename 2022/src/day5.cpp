@@ -37,13 +37,8 @@ struct Ship
     int countChars = vs.front().length()+1;
     int countStacks = countChars / 4;
     stacks.resize( countStacks );
-    //std::string regExp = "[\\[(\\w)\\]\\s|\\s\\s\\s\\s]+[\\[(\\w)\\]|\\s\\s\\s]";
-    std::string regExp = "(\\[(\\w)\\]\\s)";
     for( int i = vs.size() - 2; i >= 0; --i )
     {
-      std::vector<std::string> values;
-      splitByRegex( vs[i], regExp, values );
-
       for( int j = 0; j < countStacks; ++j )
       {
         char aux = vs[i][1 + 4 * j];
