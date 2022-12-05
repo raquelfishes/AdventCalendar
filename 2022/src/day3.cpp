@@ -12,13 +12,6 @@
 #include "utils.h"
 
 
-bool isLowerCase( const char c )
-{
-  if( ( c - 'a' ) >= 0 && ( c - 'a' ) <= ( 'z' - 'a' ) )
-    return true;
-  return false;
-}
-
 void day3Part1()
 {
 
@@ -42,8 +35,8 @@ void day3Part1()
       if( comp1.contains( line[sizeC + i] ) )
       {
         int value;
-        if ( isLowerCase(line[sizeC + i] ) ) value = line[sizeC + i] - 'a';
-        else value= (line[sizeC + i] - 'A') + 26;
+        if( isCharLowerCase(line[sizeC + i] ) ) value = line[sizeC + i] - 'a';
+        if( isCharUpperCase( line[sizeC + i] ) ) value = line[sizeC + i] - 'A'+26;
 
         count += value + 1;
         break;
@@ -82,8 +75,8 @@ void day3Part2()
     std::set_intersection( intersection1.begin(), intersection1.end(), elf3.begin(), elf3.end(), std::back_inserter( intersection2 ) );
 
     int value;
-    if( isLowerCase( intersection2[0] ) ) value = intersection2[0] - 'a';
-    else value = ( intersection2[0] - 'A' ) + 26;
+    if( isCharLowerCase( intersection2[0] ) ) value = intersection2[0] - 'a';
+    if( isCharUpperCase( intersection2[0] ) ) value = ( intersection2[0] - 'A' ) + 26;
 
     count += value + 1;
 

@@ -111,18 +111,18 @@ int main( int argc, char* argv[] )
     //  day2Part1();
     //  day2Part2();
     //  break;
-    //case 3:
-    //  day3Part1();
-    //  day3Part2();
-    //  break;
-    //case 4:
-    //  day4Part1();
-    //  day4Part2();
-    //  break;
-    //case 5:
-    //  day5Part1();
-    //  day5Part2();
-    //  break;
+    case 3:
+      day3Part1();
+      day3Part2();
+      break;
+    case 4:
+      day4Part1();
+      day4Part2();
+      break;
+    case 5:
+      day5Part1();
+      day5Part2();
+      break;
     //case 6:
     //  day6Part1();
     //  day6Part2();
