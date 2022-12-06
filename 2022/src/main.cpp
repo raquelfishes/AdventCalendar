@@ -123,10 +123,10 @@ int main( int argc, char* argv[] )
       day5Part1();
       day5Part2();
       break;
-    //case 6:
-    //  day6Part1();
-    //  day6Part2();
-    //  break;
+    case 6:
+      day6Part1();
+      day6Part2();
+      break;
     //case 7:
     //  day7Part1();
     //  day7Part2();
