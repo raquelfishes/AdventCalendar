@@ -31,7 +31,61 @@ bool readDocument(const std::string path, std::vector<T>& values)
   myfile.close();
 }
 
+template<typename T>
+bool readDocumentUntilEmptyLine( const std::string path, std::vector<T>& values )
+{
+  // Open numbers file
+  std::ifstream myfile( path );
+  if( !myfile.is_open() )
+  {
+    fprintf( stderr, "readDocument: Error, no file founded %s\n", path.c_str() );
+    return false;
+  }
+
+  std::string line;
+  while( getline( myfile, line ) )
+  {
+    if( line.empty() )
+      break;
+    values.push_back( T( line ) );
+  }
+
+  myfile.close();
+}
+
+template<typename T>
+bool readDocumentFromEmptyLine( const std::string path, std::vector<T>& values )
+{
+  // Open numbers file
+  std::ifstream myfile( path );
+  if( !myfile.is_open() )
+  {
+    fprintf( stderr, "readDocument: Error, no file founded %s\n", path.c_str() );
+    return false;
+  }
+
+  std::string line;
+  bool foundEmptyLine = false;
+  while( getline( myfile, line ) )
+  {
+    if( line.empty() )
+    {
+      foundEmptyLine = true;
+      continue;
+    }
+      
+    if ( foundEmptyLine )
+      values.push_back( T( line ) );
+  }
+
+  myfile.close();
+}
+
+
 int char2int(const char c);
+
+bool isCharLowerCase( const char c );
+bool isCharUpperCase( const char c );
 
 bool isUppercase(const std::string& s);
 bool isLowercase(const std::string& s);

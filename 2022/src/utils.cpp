@@ -66,4 +66,17 @@ bool isLowercase(const std::string& s)
   return true;
 }
 
+bool isCharLowerCase( const char c )
+{
+  if( ( c - 'a' ) >= 0 && ( c - 'a' ) <= ( 'z' - 'a' ) )
+    return true;
+  return false;
+}
+
+bool isCharUpperCase( const char c )
+{
+  if( ( c - 'A' ) >= 0 && ( c - 'A' ) <= ( 'Z' - 'A' ) )
+    return true;
+  return false;
+}
 
