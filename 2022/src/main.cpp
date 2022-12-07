@@ -35,11 +35,11 @@ void paintAdventCalendar()
   printf( HBLK "@@###@@###@#@@@@#@@@#@@@##@##@@@@@@@@@@@@@#@@@@@@" reset "    " "10" reset "\n" );
   printf( HBLK "#@@@@#@@@@@@@@@#####@@@##@@@#@@@#@@@@@@@@#@##@#@@" reset "    " "9" reset "\n" );
   printf( HBLK "@@@@#@@@#@@###@@@@@@@@#@#@#@#@@#@#@@#@@@@###@@@@@" reset "    " "8" reset "\n" );
-  printf( HBLK "@@##@@@##@@##@@@#@##@#@@#@@@@@#@###@@@@#@@#@@@#@@" reset "    " "7" reset "\n" );
-  printf( HBLK "@@@##@#@@@@@@@@@@@@@@@#@@@@#@#@@##@@@###@@@@@@##@" reset "    " "6" reset "\n" );
-  printf( HBLK "@@#@#@@@@@#@##@#@#@@#@#@@@@#@@@@@@@@#@@@@#@@##@@@" reset "    " "5" reset "\n" );
-  printf( HBLK "@###@@@@@##@##@#@@#@@@#@##@@#@@@@##@@@@@@#@@@@@#@" reset "    " "4" reset "\n" );
-  printf( HBLK "@@@@@#@@#@#@@@@@@@@#@@@#@####@#@#@@@#@@@@@@#@#@@#" reset "    " "3" reset "\n" );
+  printf( HBLK "@@@@#@@@@" GRN "@" HGRN "@" CYN ".~~." GRN "#@" HGRN "#@" GRN "@#@#@" YEL "." HGRN "@" GRN "@" HBLK "@#@@@@@@#@#@@##@@#@#@@" reset "    " "7" BHYEL "  " "**" reset "\n" );
+  printf( HBLK "@@##@#@#@@" GRN "@@" CYN ".~~." GRN "@@@@@" HGRN "@"  GRN "@" YEL ".." GRN "@@" HBLK "@@@@##@#@#@@@@#@@#@@#@" reset "    " "6" BHYEL "  " "**" reset "\n" );
+  printf( HBLK "@@@@#@@@" RED "|" GRN "@" HGRN "@" GRN "@" HGRN "@" CYN ".~~." GRN "##" YEL "."  WHT "/\\" YEL ".'" GRN "@#@#@" HBLK "@#@@@#@@@@@@@@@@@@#@" reset "    " "5" BHYEL "  " "**" reset "\n" );
+  printf( HBLK "@#@#@" HGRN "@" GRN "#" GRN "@@" HGRN "@" GRN "@" YEL ".'" CYN " ~  " YEL "'." WHT "/\\" YEL "'." WHT "/\\" YEL "' ." GRN "@" HGRN "@" GRN "@" HBLK "@@@@@#@@@#@@@@##@#" reset "    " "4" BHYEL "  " "**" reset "\n" );
+  printf( HBLK "#" GRN "@" HGRN "#" GRN "#" HGRN "#" GRN "@" HGRN "@" GRN "@@" YEL "_/" CYN " ~   ~  " YEL "\\ ' '. '.'." GRN "@#" HBLK "#@@@@#@@@@##@#@##" reset "    " "3" BHYEL "  " "**" reset "\n" );
   printf( YEL  "-~------'" CYN "    ~    ~ " YEL "'--~-----~-~----___________--" reset "    " "2" BHYEL "  " "**" reset "\n" );
   printf( CYN  "  ~    ~  ~      ~     ~ ~   ~     ~  ~  ~   ~     " reset "  " "1" BHYEL "  " "**" reset "\n" );
 }

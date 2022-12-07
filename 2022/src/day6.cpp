@@ -1,5 +1,6 @@
 #include "std_includes.h"
 #include "resource.h"
+#include "utils.h"
 
 
 void day6Part1()

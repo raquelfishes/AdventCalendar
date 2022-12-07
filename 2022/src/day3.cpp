@@ -22,7 +22,7 @@ void day3Part1()
     std::set<char> comp1(line.begin(), line.begin()+sizeC) ;
     for( int i = 0; i < sizeC; ++i )
     {
-      if( comp1.contains( line[sizeC + i] ) )
+      if( comp1.count( line[sizeC + i] ) > 0 )
       {
         int value;
         if( isCharLowerCase(line[sizeC + i] ) ) value = line[sizeC + i] - 'a';
