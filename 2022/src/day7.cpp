@@ -9,7 +9,7 @@ void day7Part1()
   readDocument( DAY7_PATH, input );
   
   std::string currentDir = "";
-  std::stack<std::string> dirStack;
+  std::vector<std::string> dirVector;
   std::map<std::string, long long> dirMap;
 
   for ( auto& line : input )
@@ -21,35 +21,22 @@ void day7Part1()
     {
       if ( simbolsLine[2] == ".." )
       {
-        dirStack.pop();
-        currentDir = dirStack.top();
+        dirVector.pop_back();
+        currentDir = dirVector.back();
       }
       else
       {
         currentDir.append( "/" );
         currentDir.append( simbolsLine[2] );
-        dirStack.push( currentDir );
+        dirVector.push_back( currentDir );
         dirMap[currentDir] = 0;
       }
     }
     else if ( simbolsLine.front() != "$" && simbolsLine.front().find_first_not_of( "0123456789" ) == std::string::npos )
     {
-      dirMap[currentDir] += std::stoll( simbolsLine.front() );
-
-      // Add to all the parent directories
-      std::stack<std::string> auxStack;
-      auxStack.push( dirStack.top() );
-      dirStack.pop();
-      while ( !dirStack.empty() )
+      for ( auto& dir : dirVector )
       {
-        auxStack.push( dirStack.top() );
-        dirMap[dirStack.top()] += std::stoll( simbolsLine.front() );
-        dirStack.pop();
-      }
-      while ( !auxStack.empty() )
-      {
-        dirStack.push( auxStack.top() );
-        auxStack.pop();
+        dirMap[dir] += std::stoll( simbolsLine.front() );
       }
     }
   }
@@ -72,7 +59,7 @@ void day7Part1()
 void day7Part2()
 {
 
-  std::stack<std::string> dirStack;
+  std::vector<std::string> dirVector;
   std::map<std::string, long long int> dirMap;
 
   std::string currentDir = "";
@@ -91,37 +78,23 @@ void day7Part2()
     {
       if ( simbolsLine[2] == ".." )
       {
-        dirStack.pop();
-        currentDir = dirStack.top();
+        dirVector.pop_back();
+        currentDir = dirVector.back();
       }
       else
       {
         currentDir.append( "/" );
         currentDir.append( simbolsLine[2] );
-        dirStack.push( currentDir );
+        dirVector.push_back( currentDir );
         dirMap[currentDir] = 0;
       }
     }
     else if ( simbolsLine.front() != "$" && simbolsLine.front().find_first_not_of( "0123456789" ) == std::string::npos )
     {
-      dirMap[currentDir] += std::stoll( simbolsLine.front() );
-      usedSpace = std::max( dirMap[currentDir], usedSpace );
-  
-      // Add to all the parent directories
-      std::stack<std::string> auxStack;
-      auxStack.push( dirStack.top() );
-      dirStack.pop();
-      while ( !dirStack.empty() )
+      for ( auto& dir : dirVector )
       {
-        auxStack.push( dirStack.top() );
-        dirMap[dirStack.top()] += std::stoll( simbolsLine.front() );
-        usedSpace = std::max( dirMap[dirStack.top()], usedSpace );
-        dirStack.pop();
-      }
-      while ( !auxStack.empty() )
-      {
-        dirStack.push( auxStack.top() );
-        auxStack.pop();
+        dirMap[dir] += std::stoll( simbolsLine.front() );
+        usedSpace = std::max( usedSpace, dirMap[dir] );
       }
     }
   }
