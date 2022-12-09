@@ -34,6 +34,14 @@ public:
       }
     }
   }
+  Grid( const int sX, const int sY )
+  {
+    sizeX = sX;
+    sizeY = sY;
+    const int numValues = sizeX * sizeY;
+    values.resize( numValues );
+    visited.resize( numValues, false );
+  }
 
   coord getXY( const int index )
   {

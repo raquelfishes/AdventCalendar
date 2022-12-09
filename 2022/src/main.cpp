@@ -33,8 +33,8 @@ void paintAdventCalendar()
   printf( HBLK "@@@@#@@@@@@@@###@@#@@#@#@@@#@@####@@@@@@@@@#@@##@" reset "    " "12" reset "\n" );
   printf( HBLK "@#@@@@@@@#@##@@###@@#@@@@#@@@#@##@#@@@#@@@@#@#@##" reset "    " "11" reset "\n" );
   printf( HBLK "@@###@@###@#@@@@#@@@#@@@##@##@@@@@@@@@@@@@#@@@@@@" reset "    " "10" reset "\n" );
-  printf( HBLK "#@@@@#@@@@@@@@@#####@@@##@@@#@@@#@@@@@@@@#@##@#@@" reset "    " "9" reset "\n" );
-  printf( HBLK "@@@@#@@@#@@###@@@@@@@@#@#@#@#@@#@#@@#@@@@###@@@@@" reset "    " "8" reset "\n" );
+  printf( GRN "@" HGRN "#" GRN "@#" YEL "." GRN "@#" WHT " _" YEL "|%%%%%%=%%%%|" WHT "_ " GRN "@@@@" HGRN "@" GRN "@" HBLK "@@##@@@@@@@#@#@@@@@#@@@#" reset "    " "9" BHYEL "  " "**" reset "\n" );
+  printf( HBLK "@#@" HGRN "@@" YEL ".." WHT "/  \\" CYN ".~~." WHT "/  \\" YEL "....." GRN "@" HGRN "@" HBLK "@#@@@@#@@@@@@@@@#@@#@@#" reset "    " "8" BHYEL "  " "**" reset "\n" );
   printf( HBLK "@@@@#@@@@" GRN "@" HGRN "@" CYN ".~~." GRN "#@" HGRN "#@" GRN "@#@#@" YEL "." HGRN "@" GRN "@" HBLK "@#@@@@@@#@#@@##@@#@#@@" reset "    " "7" BHYEL "  " "**" reset "\n" );
   printf( HBLK "@@##@#@#@@" GRN "@@" CYN ".~~." GRN "@@@@@" HGRN "@"  GRN "@" YEL ".." GRN "@@" HBLK "@@@@##@#@#@@@@#@@#@@#@" reset "    " "6" BHYEL "  " "**" reset "\n" );
   printf( HBLK "@@@@#@@@" RED "|" GRN "@" HGRN "@" GRN "@" HGRN "@" CYN ".~~." GRN "##" YEL "."  WHT "/\\" YEL ".'" GRN "@#@#@" HBLK "@#@@@#@@@@@@@@@@@@#@" reset "    " "5" BHYEL "  " "**" reset "\n" );
@@ -51,44 +51,6 @@ int getDay()
   std::cin >> day;
   std::cout << std::endl;
   return day;
-}
-
-#include <algorithm>
-
-int checkSubList( const std:: vector<int> &A, const int n ) // 1 2 1 5 // 2 1 5 // 1 5
-{
-    if ( A.empty())
-    {
-        return 0;
-    }
-
-    int maxLength = 0;
-    
-    for ( int i=0; i<A.size();++i ) // 1 // 2 // 5
-    {
-        int maxLengthAux = 0;
-        if (A[i] <= n) //
-            continue;
-
-        maxLengthAux++; // 1 // 1 // 1
-        std::vector<int> auxA(A.begin()+i+1, A.end()); // 2 1 5 // 1 5 //
-        maxLengthAux+=checkSubList(auxA, A.at(i)); 
-
-        maxLength = std::max( maxLength, maxLengthAux);
-    }
-    return maxLength;
-}
-
-int lis(const std::vector<int> &A) {
-
-    return checkSubList(A, -1);
-}
-
-void fb1()
-{
-  std::vector<int> A = { 86, 64, 34, 56, 73, 52, 75, 51, 2, 78, 14, 10, 74, 36, 32, 31, 32, 87, 36, 4, 66, 89, 47, 12, 53, 9, 73, 34, 92, 34, 87, 1, 28, 24, 46, 92, 27, 1, 13, 75, 46, 4, 74, 93, 76, 56, 31, 42, 65, 58, 84, 61, 18, 59, 89, 29, 96, 101, 42, 95, 28, 65, 48, 51, 51, 18, 90, 43, 75, 22, 87, 100, 80, 14, 13, 78, 55, 78, 18, 25, 53, 88, 8, 9, 16, 86, 18 };
-  std::cout << lis( A ) << std::endl;
-
 }
 
 
