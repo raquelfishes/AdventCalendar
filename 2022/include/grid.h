@@ -9,7 +9,7 @@
 #include <regex>
 
 
-typedef std::pair<int, int> coord;
+typedef std::pair<int, int> Coord;
 
 
 template<typename T>

@@ -29,11 +29,11 @@ void day9Part1()
   std::vector<Instruction> input;
   readDocument<Instruction>( DAY9_PATH, input );
 
-  std::set<coord> tailVisited;
+  std::set<Coord> tailVisited;
 
-  coord initPos( 0, 0 );
-  coord headPos = initPos;
-  coord tailPos = initPos;
+  Coord initPos( 0, 0 );
+  Coord headPos = initPos;
+  Coord tailPos = initPos;
   tailVisited.insert( initPos );
 
   for( auto& inst : input )
@@ -41,12 +41,12 @@ void day9Part1()
     int moved = inst.countMoves;
     while( moved > 0 )
     {
-      coord oldHeadPos = headPos;
+      Coord oldHeadPos = headPos;
 
       headPos.first += inst.dirX;
       headPos.second += inst.dirY;
 
-      coord diffHeadTail( ( headPos.first - tailPos.first ), ( headPos.second - tailPos.second ) );
+      Coord diffHeadTail( ( headPos.first - tailPos.first ), ( headPos.second - tailPos.second ) );
       if( std::abs( diffHeadTail.first ) > 1 || std::abs( diffHeadTail.second ) > 1 )
       {
         tailPos = oldHeadPos;
@@ -66,11 +66,11 @@ void day9Part2()
   std::vector<Instruction> input;
   readDocument<Instruction>( DAY9_PATH, input );
 
-  std::set<coord> tailVisited;
+  std::set<Coord> tailVisited;
   const int numKnots = 10;
 
-  coord initPos( 0, 0 );
-  std::vector<coord> ropePos( numKnots, initPos );
+  Coord initPos( 0, 0 );
+  std::vector<Coord> ropePos( numKnots, initPos );
   tailVisited.insert( initPos );
 
   for( auto& inst : input )
@@ -78,14 +78,14 @@ void day9Part2()
     int moved = inst.countMoves;
     while( moved > 0 )
     {
-      coord oldPos = ropePos[0];
+      Coord oldPos = ropePos[0];
       ropePos.front().first += inst.dirX;
       ropePos.front().second += inst.dirY;
 
       for( int i = 1; i < numKnots; ++i )
       {
-        coord auxOldPos = ropePos[i];
-        coord diffToPrev( ( ropePos[i-1].first - ropePos[i].first ), ( ropePos[i - 1].second - ropePos[i].second ) );
+        Coord auxOldPos = ropePos[i];
+        Coord diffToPrev( ( ropePos[i-1].first - ropePos[i].first ), ( ropePos[i - 1].second - ropePos[i].second ) );
         int diffValue = std::abs( diffToPrev.first ) + std::abs( diffToPrev.second );
         if( std::abs( diffToPrev.first ) <= 1 && std::abs( diffToPrev.second ) <= 1 ) continue;
         else
