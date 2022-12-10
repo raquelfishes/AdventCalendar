@@ -43,12 +43,12 @@ public:
     visited.resize( numValues, false );
   }
 
-  coord getXY( const int index )
+  Coord getXY( const int index )
   {
     return std::pair<int, int>( ( index%sizeX ), ( index / sizeX ) );
   }
 
-  int getIndex( const coord c )
+  int getIndex( const Coord c )
   {
     return getIndex( c.first, c.second );
   }
@@ -58,7 +58,7 @@ public:
     return x + y * sizeX;
   }
 
-  bool isValidCoord( const coord c )
+  bool isValidCoord( const Coord c )
   {
     return isValidCoord(c.first, c.second);
   }
@@ -76,7 +76,7 @@ public:
     return ( index >= 0 ) && ( index < ( sizeX*sizeY ) );
   }
 
-  bool isDiagonal( const coord p1, const coord p2 )
+  bool isDiagonal( const Coord p1, const Coord p2 )
   {
     return isDiagonal( p1.first, p1.second, p2.first, p2.second );
   }
@@ -92,7 +92,7 @@ public:
     {
       for ( int j = 0; j < sizeY; ++j )
       {
-        int index = getIndex( coord( j, i ) );
+        int index = getIndex( Coord( j, i ) );
         if ( values[index] == 0 )
           printf( "." );
         else
