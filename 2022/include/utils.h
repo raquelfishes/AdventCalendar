@@ -32,6 +32,45 @@ bool readDocument(const std::string path, std::vector<T>& values)
 }
 
 template<typename T>
+bool readDocumentSeveralLinesRegex( const std::string path, const std::string& regExp, const int numLines, std::vector<T>& values )
+{
+  // Open numbers file
+  std::ifstream myfile( path );
+  if( !myfile.is_open() )
+  {
+    fprintf( stderr, "readDocument: Error, no file founded %s\n", path.c_str() );
+    return false;
+  }
+
+  std::string line;
+  int currLines = 0;
+  std::vector<std::string> currLinesToProcess;
+  while( getline( myfile, line ) )
+  {
+    //if( (matchRegex( line, regExp )) || ( (currLines > 0) && (currLine < numLines) ) )
+    if( matchRegex( line, regExp ) )
+    {
+      currLinesToProcess.push_back( line );
+      currLines++;
+    }
+    else if( currLines > 0 && currLines < numLines )
+    {
+      currLinesToProcess.push_back( line );
+      currLines++;
+    }
+    else
+    {
+      values.push_back( T( currLinesToProcess ) );
+      currLinesToProcess.clear();
+      currLines = 0;
+    }
+  }
+  values.push_back( T( currLinesToProcess ) );
+
+  myfile.close();
+}
+
+template<typename T>
 bool readDocumentUntilEmptyLine( const std::string path, std::vector<T>& values )
 {
   // Open numbers file

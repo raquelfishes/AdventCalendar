@@ -31,7 +31,7 @@ void paintAdventCalendar()
   printf( HBLK "#@#@@@#@@@@@##@@@@##@@@@@@@@@@@@@@@#@@###@@@@@@@@" reset "    " "14" reset "\n" );
   printf( HBLK "@@@@@@@@@@#@#@@#@@@#@@@@#@#@#@#@#@#@@@##@@@@@@@@@" reset "    " "13" reset "\n" );
   printf( HBLK "@@@@#@@@@@@@@###@@#@@#@#@@@#@@####@@@@@@@@@#@@##@" reset "    " "12" reset "\n" );
-  printf( HBLK "@#@@@@@@@#@##@@###@@#@@@@#@@@#@##@#@@@#@@@@#@#@##" reset "    " "11" reset "\n" );
+  printf( HBLK "@@#@@@@@#@" GRN "@" HGRN "@" CYN ".~~."  HGRN "#" GRN "@" HBLK "@@@@@@@##@@@#@@##@@##@@@@@@@@##" reset "    " "11" BHYEL " " "**" reset "\n" );
   printf( HBLK "#@@@@@@@@" GRN "@@" CYN ".~~." HGRN "@" GRN "@@@@" HBLK "#@@@#@@@@#@@#@##@@###@@@@@##@" reset "    " "10" BHYEL " " "**" reset "\n" );
   printf( GRN "@" HGRN "#" GRN "@#" YEL "." GRN "@#" WHT " _" YEL "|%%%%%%=%%%%|" WHT "_ " GRN "@@@@" HGRN "@" GRN "@" HBLK "@@##@@@@@@@#@#@@@@@#@@@#" reset "    " "9" BHYEL "  " "**" reset "\n" );
   printf( HBLK "@#@" HGRN "@@" YEL ".." WHT "/  \\" CYN ".~~." WHT "/  \\" YEL "....." GRN "@" HGRN "@" HBLK "@#@@@@#@@@@@@@@@#@@#@@#" reset "    " "8" BHYEL "  " "**" reset "\n" );

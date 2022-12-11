@@ -21,11 +21,13 @@ bool splitString(const std::string value, const char c, std::vector<std::string>
 
 bool splitByRegex( const std::string line, const std::string expr, std::vector<std::string>& values )
 {
+  values.clear();
   return splitByRegex( line, std::regex( expr ), values );
 }
 
 bool splitByRegex(const std::string line, const std::regex expr, std::vector<std::string>& values)
 {
+  values.clear();
   std::smatch smatch;
   if (std::regex_search(line, smatch, expr))
   {
