@@ -18,7 +18,35 @@ class Grid
 
 public: 
   Grid() = default;
-  Grid( std::vector<std::string> strValues )
+
+  //Grid( std::vector<std::string> strValues )
+  //{
+  //  sizeX = strValues[0].size();
+  //  sizeY = strValues.size();
+  //
+  //  const int numValues = sizeX * sizeY;
+  //  values.reserve( numValues );
+  //  visited.resize( numValues, false );
+  //  for ( auto& line : strValues )
+  //  {
+  //    for ( auto & col : line )
+  //    {
+  //      values.push_back( char2int( col ) );
+  //    }
+  //  }
+  //}
+
+  Grid( const int sX, const int sY )
+  {
+    sizeX = sX;
+    sizeY = sY;
+    const int numValues = sizeX * sizeY;
+    values.resize( numValues );
+    visited.resize( numValues, false );
+    visitedSteps.resize( numValues, -1 );
+  }
+
+  void initializeToInt( std::vector<std::string>& strValues )
   {
     sizeX = strValues[0].size();
     sizeY = strValues.size();
@@ -26,6 +54,7 @@ public:
     const int numValues = sizeX * sizeY;
     values.reserve( numValues );
     visited.resize( numValues, false );
+    visitedSteps.resize( numValues, -1 );
     for ( auto& line : strValues )
     {
       for ( auto & col : line )
@@ -34,13 +63,23 @@ public:
       }
     }
   }
-  Grid( const int sX, const int sY )
+
+  void initializeToChar( std::vector<std::string>& strValues )
   {
-    sizeX = sX;
-    sizeY = sY;
+    sizeX = strValues[0].size();
+    sizeY = strValues.size();
+
     const int numValues = sizeX * sizeY;
-    values.resize( numValues );
+    values.reserve( numValues );
     visited.resize( numValues, false );
+    visitedSteps.resize( numValues, -1 );
+    for ( auto& line : strValues )
+    {
+      for ( auto & col : line )
+      {
+        values.push_back( charLowerCase2int(col) );
+      }
+    }
   }
 
   Coord getXY( const int index )
@@ -110,6 +149,7 @@ public:
   int sizeY;
   std::vector<T> values;
   std::vector<bool> visited;
+  std::vector<int> visitedSteps;
 };
 
 

@@ -56,13 +56,24 @@ int char2int(const char c)
   return (c - '0');
 }
 
-bool isUppercase(const std::string& s)
+int charLowerCase2int( const char c )
+{
+  return ( c - 'a' );
+}
+
+int charUpperCase2int( const char c )
+{
+  return ( c - 'A' );
+}
+
+
+bool isUpperCase(const std::string& s)
 {
   //return std::all_of(s.begin(), s.end(), [](unsigned char c) { return std::isupper(c); });
   return true;
 }
 
-bool isLowercase(const std::string& s)
+bool isLowerCase(const std::string& s)
 {
   //return std::all_of(s.begin(), s.end(), [](unsigned char c) { return !std::isupper(c); });
   return true;

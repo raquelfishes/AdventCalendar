@@ -122,11 +122,13 @@ bool readDocumentFromEmptyLine( const std::string path, std::vector<T>& values )
 
 
 int char2int(const char c);
+int charLowerCase2int( const char c );
+int charUpperCase2int( const char c );
 
 bool isCharLowerCase( const char c );
 bool isCharUpperCase( const char c );
 
-bool isUppercase(const std::string& s);
-bool isLowercase(const std::string& s);
+bool isUpperCase(const std::string& s);
+bool isLowerCase(const std::string& s);
 
 
