@@ -4,7 +4,8 @@
 #include "std_includes.h"
 
 
-bool splitString(const std::string value, const char c, std::vector<std::string>& splited );
+bool splitStringByChar(const std::string value, const char c, std::vector<std::string>& splited );
+bool splitStringByString( const std::string& value, const std::string& del, std::vector<std::string>& splited );
 
 bool splitByRegex( const std::string line, const std::string regex, std::vector<std::string>& values );
 bool splitByRegex(const std::string line, const std::regex regex, std::vector<std::string>& values);
@@ -31,8 +32,10 @@ bool readDocument(const std::string path, std::vector<T>& values)
   myfile.close();
 }
 
+
+
 template<typename T>
-bool readDocumentSeveralLinesRegex( const std::string path, const std::string& regExp, const int numLines, std::vector<T>& values )
+bool readDocumentSeveralLines( const std::string path, const int numLines, std::vector<T>& values )
 {
   // Open numbers file
   std::ifstream myfile( path );
@@ -47,22 +50,16 @@ bool readDocumentSeveralLinesRegex( const std::string path, const std::string& r
   std::vector<std::string> currLinesToProcess;
   while( getline( myfile, line ) )
   {
-    //if( (matchRegex( line, regExp )) || ( (currLines > 0) && (currLine < numLines) ) )
-    if( matchRegex( line, regExp ) )
-    {
-      currLinesToProcess.push_back( line );
-      currLines++;
-    }
-    else if( currLines > 0 && currLines < numLines )
-    {
-      currLinesToProcess.push_back( line );
-      currLines++;
-    }
-    else
+    if ( line.empty() )
     {
       values.push_back( T( currLinesToProcess ) );
       currLinesToProcess.clear();
-      currLines = 0;
+      currLines = 0;      
+    }
+    else if( currLines < numLines )
+    {
+      currLinesToProcess.push_back( line );
+      currLines++;
     }
   }
   values.push_back( T( currLinesToProcess ) );

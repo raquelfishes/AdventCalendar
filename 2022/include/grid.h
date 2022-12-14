@@ -125,11 +125,31 @@ public:
     return ( std::abs( x1 - x2 ) && std::abs( y1 - y2 ) );
   }
 
+  T getValue( const Coord p )
+  {
+    return values[getIndex( p )];
+  }
+
+  T getValue( const int id )
+  {
+    return values[id];
+  }
+
+  void setValue( const Coord p, const T v)
+  {
+    values[getIndex( p )] = v;
+  }
+
+  void getValue( const int id, const T v )
+  {
+    values[id] = v;
+  }
+
   void printGrid()
   {
-    for ( int i = 0; i < sizeX; ++i )
+    for ( int i = 0; i < sizeY; ++i )
     {
-      for ( int j = 0; j < sizeY; ++j )
+      for ( int j = 0; j < sizeX; ++j )
       {
         int index = getIndex( Coord( j, i ) );
         if ( values[index] == 0 )
@@ -153,6 +173,7 @@ public:
 };
 
 
+typedef Grid<int> GridI;
 typedef Grid<int> GridI;
 
 

@@ -15,7 +15,7 @@ void day7Part1()
   for ( auto& line : input )
   {
     std::vector<std::string>simbolsLine;
-    splitString( line, ' ', simbolsLine );
+    splitStringByChar( line, ' ', simbolsLine );
 
     if ( simbolsLine.front() == "$" && simbolsLine[1] == "cd" )
     {
@@ -72,7 +72,7 @@ void day7Part2()
   for ( auto& line : input )
   {
     std::vector<std::string>simbolsLine;
-    splitString( line, ' ', simbolsLine );
+    splitStringByChar( line, ' ', simbolsLine );
 
     if ( simbolsLine.front() == "$" && simbolsLine[1] == "cd" )
     {

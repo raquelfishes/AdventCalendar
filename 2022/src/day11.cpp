@@ -16,7 +16,7 @@ struct Monkey
     splitByRegex( input[0], regExpMonkeyNum, splittedText );
     id = std::stoi( splittedText[1] );
     splitByRegex( input[1], regExpMonkeyItems, splittedText );
-    splitString( splittedText[1], ',', splittedText );
+    splitStringByChar( splittedText[1], ',', splittedText );
     std::for_each( splittedText.begin(), splittedText.end(), [&]( std::string& s ) {items.push_back( std::stoi( s ) ); } );
     splitByRegex( input[2], regExpMonkeyOps, splittedText );
     newOp = splittedText[1][0];
@@ -64,8 +64,7 @@ struct Monkey
 void day11Part1()
 {
   std::vector<Monkey> input;
-  std::string regExpMonkeyNum = "Monkey (\\d+):";
-  readDocumentSeveralLinesRegex( DAY11_PATH, regExpMonkeyNum, 6, input );
+  readDocumentSeveralLines( DAY11_PATH, 6, input );
   
   const int rounds = 20;
 
@@ -95,8 +94,7 @@ void day11Part2()
 {
 
   std::vector<Monkey> input;
-  std::string regExpMonkeyNum = "Monkey (\\d+):";
-  readDocumentSeveralLinesRegex( DAY11_PATH, regExpMonkeyNum, 6, input );
+  readDocumentSeveralLines( DAY11_PATH, 6, input );
 
   const int rounds = 10000;
 

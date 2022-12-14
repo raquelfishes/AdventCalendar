@@ -12,7 +12,7 @@ struct Instruction
       return;
     }
     std::vector<std::string> values;
-    splitString( s, ' ', values );
+    splitStringByChar( s, ' ', values );
     cyclesToComplete = 2;
     value = std::stoi( values[1] );
   }

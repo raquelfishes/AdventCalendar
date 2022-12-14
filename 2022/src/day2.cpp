@@ -70,7 +70,7 @@ void day2Part1()
   for ( auto& line : input )
   {
     std::vector<std::string> parts;
-    splitString( line, ' ', parts );
+    splitStringByChar( line, ' ', parts );
 
     std::string newOption = convertOption( parts[1] );
 
@@ -114,7 +114,7 @@ void day2Part2()
   for ( auto& line : input )
   {
     std::vector<std::string> parts;
-    splitString( line, ' ', parts );
+    splitStringByChar( line, ' ', parts );
 
     std::string option = getOption( parts[0], parts[1] );
 

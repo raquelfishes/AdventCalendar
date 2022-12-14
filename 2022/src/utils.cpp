@@ -6,7 +6,7 @@
 
 
 
-bool splitString(const std::string value, const char c, std::vector<std::string>& splited)
+bool splitStringByChar(const std::string value, const char c, std::vector<std::string>& splited)
 {
   splited.clear();
   std::stringstream ssRange(value);
@@ -15,6 +15,22 @@ bool splitString(const std::string value, const char c, std::vector<std::string>
   {
     splited.push_back(splitValue);
   }
+
+  return true;
+}
+
+bool splitStringByString( const std::string& value, const std::string& deli, std::vector<std::string>& splited )
+{
+  splited.clear();
+  int start = 0;
+  int end = value.find( deli );
+  while ( end != -1 )
+  {
+    splited.push_back(value.substr( start, end-start ));
+    start = end + deli.length();
+    end = value.find( deli, start );
+  }
+  splited.push_back( value.substr( start, end - start ) );
 
   return true;
 }
