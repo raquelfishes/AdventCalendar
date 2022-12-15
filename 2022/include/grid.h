@@ -10,6 +10,7 @@
 
 
 typedef std::pair<int, int> Coord;
+typedef std::pair<long long, long long> CoordL;
 
 
 template<typename T>
