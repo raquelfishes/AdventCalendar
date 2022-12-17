@@ -28,8 +28,10 @@ struct Valve
 int pathSearch( const std::string& valve, const int countValves, int leftTime, std::map<std::string, int>& map, std::vector<Valve> vector )
 {
   leftTime--;
+  if( leftTime <= 0 ) 
+    return 0;
 
-  if ( countValves == 0 || leftTime == 0 )
+  if ( countValves <= 0)
     return 0;
 
   Valve& v = vector[map[valve]];
@@ -39,22 +41,25 @@ int pathSearch( const std::string& valve, const int countValves, int leftTime, s
   {
     pressure = v.rate * leftTime;
     v.opened = true;
-    pressure += pathSearch( valve, countValves - 1, leftTime-1, map );
+    pressure += pathSearch( valve, countValves - 1, leftTime-1, map, vector);
+    v.opened = false;
   }
   
   for ( auto& c : v.connectTo )
   {
-    int auxPressure = pathSearch( c, countValves, leftTime, map );
+    int auxPressure = pressure + pathSearch( c, countValves, leftTime, map, vector );
     pressure = std::max( pressure, auxPressure );
   }
 
   return pressure;
-
 }
+
+// Use the Travelers Salesman Problem (TSP) to compute the distance between each to all the valves
 
 
 void day16Part1()
 {
+  // Parse imput
   std::vector<Valve> input;
   readDocument<Valve>( DAY16_TEST_PATH, input );
   std::map<std::string, int> mapToInput;
@@ -64,10 +69,24 @@ void day16Part1()
     mapToInput.insert( { input[i].id, i } );
     if ( input[i].rate > 0 ) valvesToOpen++;
   }
-  const int time = 30;
-  const std::string firstValve = input[0].id;
 
-  long long result = 0;
+  // Remove unusefull valves (rate = 0)
+  // Removing the unusefull valves from the map, remove how to access them in the vector.
+  // So just check if the valve exists in the map.
+  for( auto& v : input )
+  {
+    if( v.rate == 0 )
+      mapToInput.erase( v.id );
+  }
+
+  std::vector<std::vector<int>>distanceMatrix( input.size(), std::vector<int>( input.size(), 0 ));
+
+
+
+  const int time = 30;
+  const std::string firstValve = "AA";
+
+  long long result = pathSearch(firstValve, valvesToOpen, time, mapToInput, input);
   printf("The solution for part 1 is: %lli \n", result);
 }
 
