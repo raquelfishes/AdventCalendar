@@ -130,6 +130,13 @@ void day17Part1()
   printf("The solution for part 1 is: %lli \n", result);
 }
 
+struct Cache
+{
+  int idRock;
+  int idInput;
+
+  int nextCache;
+};
 
 void day17Part2()
 {
