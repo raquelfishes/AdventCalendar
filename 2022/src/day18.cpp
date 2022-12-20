@@ -135,12 +135,9 @@ void day18Part2()
           ( cache.find( p.getKey() ) == cache.end() ) )
       {
         fillAir.insert( p.getKey() );
-        //spreadAir( p.x, p.y, p.z, cache, minX, maxX, minY, maxY, minZ, maxZ );
       }
     }
   }
-
-  //spreadAir( minX, minY, minZ, cache, minX, maxX, minY, maxY, minZ, maxZ );
 
   int surface = 0;
   std::vector<Point> neis;
