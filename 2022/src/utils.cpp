@@ -85,14 +85,20 @@ int charUpperCase2int( const char c )
 
 bool isUpperCase(const std::string& s)
 {
-  //return std::all_of(s.begin(), s.end(), [](unsigned char c) { return std::isupper(c); });
-  return true;
+  return std::all_of(s.begin(), s.end(), [] (const char c) { return std::isupper(c); });
+  //return true;
 }
 
 bool isLowerCase(const std::string& s)
 {
-  //return std::all_of(s.begin(), s.end(), [](unsigned char c) { return !std::isupper(c); });
-  return true;
+  return std::all_of(s.begin(), s.end(), [] (const char c) { return std::islower(c); });
+  //return true;
+}
+
+bool isAllDigits(const std::string& s)
+{
+  return std::all_of(s.begin(), s.end(), [] (const char c) { return std::isdigit(c); });
+  //return true;
 }
 
 bool isCharLowerCase( const char c )

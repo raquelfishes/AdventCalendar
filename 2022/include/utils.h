@@ -127,5 +127,6 @@ bool isCharUpperCase( const char c );
 
 bool isUpperCase(const std::string& s);
 bool isLowerCase(const std::string& s);
+bool isAllDigits(const std::string& s);
 
 
