@@ -46,6 +46,28 @@ public:
     visited.resize( numValues, false );
     visitedSteps.resize( numValues, -1 );
   }
+  
+  void initializeToString(std::vector<std::string>& strValues)
+  {
+    sizeX = strValues[0].size();
+    sizeY = strValues.size();
+
+    const int numValues = sizeX * sizeY;
+    values.clear();
+    visited.clear();
+    visitedSteps.clear();
+
+    values.reserve(numValues);
+    visited.resize(numValues, false);
+    visitedSteps.resize(numValues, -1);
+    for (auto& line : strValues)
+    {
+      for (auto& col : line)
+      {
+        values.push_back(col);
+      }
+    }
+  }
 
   void initializeToInt( std::vector<std::string>& strValues )
   {
@@ -88,22 +110,22 @@ public:
     return std::pair<int, int>( ( index%sizeX ), ( index / sizeX ) );
   }
 
-  int getIndex( const Coord c )
+  int getIndex( const Coord c ) const
   {
     return getIndex( c.first, c.second );
   }
 
-  int getIndex( const int x, const int y )
+  int getIndex( const int x, const int y ) const
   {
     return x + y * sizeX;
   }
 
-  bool isValidCoord( const Coord c )
+  bool isValidCoord( const Coord c ) const
   {
     return isValidCoord(c.first, c.second);
   }
 
-  bool isValidCoord( const int x, const int y )
+  bool isValidCoord( const int x, const int y ) const
   {
     bool validX = ( 0 <= x && x <= sizeX - 1 );
     bool validY = ( 0 <= y && y <= sizeY - 1 );
@@ -111,27 +133,27 @@ public:
     return validX && validY;
   }
 
-  bool isValidIndex( const int index )
+  bool isValidIndex( const int index ) const
   {
     return ( index >= 0 ) && ( index < ( sizeX*sizeY ) );
   }
 
-  bool isDiagonal( const Coord p1, const Coord p2 )
+  bool isDiagonal( const Coord p1, const Coord p2 ) const
   {
     return isDiagonal( p1.first, p1.second, p2.first, p2.second );
   }
 
-  bool isDiagonal( const int x1, const int y1, const int x2, const int y2 )
+  bool isDiagonal( const int x1, const int y1, const int x2, const int y2 ) const
   {
     return ( std::abs( x1 - x2 ) && std::abs( y1 - y2 ) );
   }
 
-  T getValue( const Coord p )
+  T getValue( const Coord p ) const
   {
     return values[getIndex( p )];
   }
 
-  T getValue( const int id )
+  T getValue( const int id ) const
   {
     return values[id];
   }
@@ -141,7 +163,7 @@ public:
     values[getIndex( p )] = v;
   }
 
-  void getValue( const int id, const T v )
+  void setValue( const int id, const T v )
   {
     values[id] = v;
   }

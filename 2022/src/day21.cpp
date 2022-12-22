@@ -110,11 +110,6 @@ void resolveToEq(const std::string& n, const long long eqValue, std::map<std::st
 {
   if (stackHumn.empty()) return;
 
-  //if (n == stackHumn.top())
-  //{
-  //  monkeys[stackHumn.top()].value = eqValue;
-  //}
-
   std::string sOp1 = monkeys[n].instruction.op1;
   std::string sOp2 = monkeys[n].instruction.op2;
   std::string sStack = stackHumn.top();

@@ -10,17 +10,17 @@ struct Value
 
   Value( const std::string& s )
   {
-    v = std::stoi( s );
+    val = std::stoi( s );
     id = Index++;
   }
-  Value ( int val, int id ): v(val), id(id){}
+  Value (long long v, int id ): val(v), id(id){}
   
   bool operator==( const Value& v ) const 
   {
     return v.id == id;
   }
 
-  int v;
+  long long val;
   int id = -1;
 };
 
@@ -28,8 +28,8 @@ void day20Part1()
 {
   Index = 0;
   std::vector<Value> input;
-  readDocument<Value>( DAY20_TEST_PATH, input );
-
+  readDocument<Value>( DAY20_PATH, input );
+  
   std::list<Value> listInput( input.begin(), input.end() );
   
   auto it = listInput.begin();
@@ -39,8 +39,26 @@ void day20Part1()
     if( it->id == i )
     {
       Value aux= *it;
-      int newPosition = (std::distance( listInput.begin(), it) + it->v);
-      newPosition = newPosition > 0 ? (newPosition % input.size()) : input.size() - 1 - ( std::abs(newPosition) % input.size() );
+
+      int steps = std::abs(it->val) % ( input.size() - 1 );
+      int currPosition = std::distance(listInput.begin(), it);
+      int newPosition;
+      if (it->val >= 0)
+      {
+        newPosition = currPosition + steps;
+        if (newPosition >= input.size())
+        {
+          newPosition = newPosition - ( input.size());
+        }
+      }
+      else
+      {
+        newPosition = currPosition - steps;
+        if (newPosition <= 0)
+        {
+          newPosition = input.size() - 1 - std::abs(newPosition);
+        }
+      }
       auto newIt = listInput.begin();
       std::advance( newIt, newPosition+1 );
       listInput.insert( newIt, aux );
@@ -48,23 +66,18 @@ void day20Part1()
     }
   }
   
-  auto it0 = std::find_if( listInput.begin(), listInput.end(), []( const Value& v ) {return v.v == 0; } );
+  auto it0 = std::find_if( listInput.begin(), listInput.end(), []( const Value& v ) {return v.val == 0; } );
   int pos0 = std::distance( listInput.begin(), it0 );
-
+  
   int sum= 0;
-  it = listInput.begin();
-  int advance1k = ( pos0 + 1000 ) % input.size();
-  std::advance( it, advance1k );
-  sum += it->v;
-  it = listInput.begin();
-  int advance2k = ( pos0 + 2000 ) % input.size();
-  std::advance( it, advance2k );
-  sum += it->v;
-  it = listInput.begin();
-  int advance3k = ( pos0 + 3000 ) % input.size();
-  std::advance( it, advance3k );
-  sum += it->v;
-
+  for (int i = 1; i <= 3; ++i)
+  {
+    it = listInput.begin();
+    int advance1k = ( pos0 + (1000*i) ) % ( input.size() );
+    std::advance(it, advance1k);
+    sum += it->val;
+  }
+  
   long long result = sum;
   printf("The solution for part 1 is: %lli \n", result);
 }
@@ -74,43 +87,75 @@ void day20Part2()
 {
   Index = 0;
   std::vector<Value> input;
-  readDocument<Value>( DAY20_PATH, input );
+  readDocument<Value>(DAY20_TEST_PATH, input);
 
-  std::list<Value> listInput( input.begin(), input.end() );
+  const long long decryptKey = 811589153;
+  std::for_each(input.begin(), input.end(), [&] (Value& v) { v.val *= decryptKey; });
+
+  std::list<Value> listInput(input.begin(), input.end());
 
   auto it = listInput.begin();
-  for( int i = 0; i < input.size(); ++i )
+  for (int j = 0; j < 10; ++j)
   {
-    it = std::find_if( listInput.begin(), listInput.end(), [i]( const Value& v ) {return v.id == i; } );
-    if( it->id == i )
+    std::cout << "!!!!!Round " << std::to_string(j) << std::endl;
+    for (int i = 0; i < input.size(); ++i)
     {
-      Value aux = *it;
-      listInput.erase( it );
-      int newPosition = ( std::distance( listInput.begin(), it ) + it->v );
-      newPosition = newPosition > 0 ? ( newPosition % input.size() ) : input.size() - 1 - ( std::abs( newPosition ) % input.size() );
-      auto newIt = listInput.begin();
-      std::advance( newIt, newPosition );
-      listInput.insert( newIt, aux );
+      std::cout << "##Iteration " << std::to_string(i) << std::endl;
+      it = std::find_if(listInput.begin(), listInput.end(), [i] (const Value& v) { return v.id == i; });
+      if (it->id == i)
+      {
+        Value aux = *it;
+
+        long long steps = std::abs(it->val) % ( input.size() - 1 );
+        long long currPosition = std::distance(listInput.begin(), it);
+        long long newPosition;
+        if (it->val >= 0)
+        {
+          newPosition = currPosition + steps;
+          if (newPosition >= input.size())
+          {
+            newPosition = newPosition - ( input.size() );
+          }
+        }
+        else
+        {
+          newPosition = currPosition - steps;
+          if (newPosition <= 0)
+          {
+            newPosition = input.size() - 1 - std::abs(newPosition);
+          }
+        }
+        auto newIt = listInput.begin();
+        std::advance(newIt, newPosition + 1);
+        listInput.insert(newIt, aux);
+        listInput.erase(it);
+        std::for_each(listInput.begin(), listInput.end(), [] (const Value& v) { std::cout << v.val << " "; });
+        std::cout << " " << std::endl;
+      }
     }
   }
 
-  auto it0 = std::find_if( listInput.begin(), listInput.end(), []( const Value& v ) {return v.v == 0; } );
-  int pos0 = std::distance( listInput.begin(), it0 );
+  auto it0 = std::find_if(listInput.begin(), listInput.end(), [] (const Value& v) { return v.val == 0; });
+  int pos0 = std::distance(listInput.begin(), it0);
 
-  int sum = 0;
-  it = listInput.begin();
-  int advance1k = ( pos0 + 1000 ) % input.size();
-  std::advance( it, advance1k+1 );
-  sum += it->v;
-  it = listInput.begin();
-  int advance2k = ( pos0 + 2000 ) % input.size();
-  std::advance( it, advance2k-1 );
-  sum += it->v;
-  it = listInput.begin();
-  int advance3k = ( pos0 + 3000 ) % input.size();
-  std::advance( it, advance3k-1 );
-  sum += it->v;
+  long long sum = 0;
+  for (int i = 1; i <= 3; ++i)
+  {
+    it = listInput.begin();
+    int advance1k = ( pos0 + ( 1000 * i ) ) % ( input.size() );
+    std::advance(it, advance1k);
+    sum += it->val;
+  }
 
   long long result = sum;
   printf("The solution for part 2 is: %lli \n", result);
 }
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+
