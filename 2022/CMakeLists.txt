@@ -32,6 +32,7 @@ file( GLOB HEADER_FILES
   ${INCLUDE_DIR}/sonar_sweep.h
   ${INCLUDE_DIR}/dive.h
   ${INCLUDE_DIR}/grid.h
+  ${INCLUDE_DIR}/vector2.h
 )
 
 #Source files
@@ -40,6 +41,7 @@ file( GLOB SOURCE_FILES
   # General
   ${SOURCES_DIR}/main.cpp
   ${SOURCES_DIR}/utils.cpp
+  ${SOURCES_DIR}/vector2.cpp
   # Day problems
   ${SOURCES_DIR}/day1.cpp  
   ${SOURCES_DIR}/day2.cpp

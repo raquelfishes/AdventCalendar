@@ -92,6 +92,14 @@ Coord getNextPosCube(const Coord& curr, const std::vector<Coord>& moveV, int& mo
   result.second = result.second + moveV[moveIndex].second;
   if (!grid.isValidCoord(result) || grid.getValue(result) == ' ' )
   {
+    if (result.first < 0)
+    {
+      // Could be 2 -> 1 || 3->1
+    }
+    if (result.first >= grid.sizeX)
+    {
+      // 5 -> 6
+    }
     //Compute where to move
     if (result.first < 0) result.first = grid.sizeX - 1;
     if (result.first >= grid.sizeX) result.first = 0;

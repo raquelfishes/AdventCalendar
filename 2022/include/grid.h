@@ -105,6 +105,24 @@ public:
     }
   }
 
+  void initializeToBool(std::vector<std::string>& strValues)
+  {
+    sizeX = strValues[0].size();
+    sizeY = strValues.size();
+
+    const int numValues = sizeX * sizeY;
+    values.reserve(numValues);
+    visited.resize(numValues, false);
+    visitedSteps.resize(numValues, -1);
+    for(auto& line : strValues)
+    {
+      for(auto& col : line)
+      {
+        values.push_back(col!='.');
+      }
+    }
+  }
+
   Coord getXY( const int index )
   {
     return std::pair<int, int>( ( index%sizeX ), ( index / sizeX ) );
@@ -196,7 +214,6 @@ public:
 };
 
 
-typedef Grid<int> GridI;
 typedef Grid<int> GridI;
 
 
