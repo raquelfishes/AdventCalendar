@@ -61,12 +61,19 @@ struct BluePrint
   OreClayObsiGeo geoRobotCost;
 };
 
-int computeGeodes( const int time, const BluePrint& bluePrint, const OreClayObsiGeo& robotsState, const OreClayObsiGeo& resources )
+int computeGeodes( const int time, int& maxGeodes, const BluePrint& bluePrint, const OreClayObsiGeo& robotsState, const OreClayObsiGeo& resources )
 {
   if( time <= 0 )
   {
-    return std::get<3>( resources ) * bluePrint.id;
+    maxGeodes = std::max(maxGeodes, std::get<3>( resources ));
   }
+
+  int theoricalMaxGeodes = std::get<3>( resources );
+  for( int i = time, j = 0; i >= 0; i--, j++ )
+  {
+    theoricalMaxGeodes += ( std::get<3>( robotsState ) + j ) * i;
+  }
+  if( maxGeodes > 0 && theoricalMaxGeodes < maxGeodes ) return 0;
 
   //OreClayObsiGeo qualityLevel = std::make_tuple( 0, 0, 0, 0 );
   OreClayObsiGeo newRobot = std::make_tuple(0, 0, 0, 0);
@@ -74,52 +81,53 @@ int computeGeodes( const int time, const BluePrint& bluePrint, const OreClayObsi
   OreClayObsiGeo newResources = resources;
   OreClayObsiGeo canBuildRobot = bluePrint.canBuildRobot( resources );
   long long newQualityLevel = std::numeric_limits<long long>::min();
-  
-  if( anyInTuple( canBuildRobot ) )
-  {
-    if( resources >= bluePrint.geoRobotCost )
-    {
-      newResources = resources - bluePrint.geoRobotCost;
-      std::get<3>( newRobot ) += 1;
-      newResources = newResources + robotsState;
-      newRobotsState = robotsState + newRobot;
-      long long auxQLevel = computeGeodes( time - 1, bluePrint, newRobotsState, newResources );
-      newQualityLevel = std::max( newQualityLevel, auxQLevel );
-    }
-    if( resources >= bluePrint.obsiRobotCost )
-    {
-      newResources = resources - bluePrint.obsiRobotCost;
-      std::get<2>( newRobot ) += 1;
-      newResources = newResources + robotsState;
-      newRobotsState = robotsState + newRobot;
-      long long auxQLevel = computeGeodes( time - 1, bluePrint, newRobotsState, newResources );
-      newQualityLevel = std::max( newQualityLevel, auxQLevel );
-    }
-    if( resources >= bluePrint.clayRobotCost )
-    {
-      newResources = resources - bluePrint.clayRobotCost;
-      std::get<1>( newRobot ) += 1;
-      newResources = newResources + robotsState;
-      newRobotsState = robotsState + newRobot;
-      long long auxQLevel = computeGeodes( time - 1, bluePrint, newRobotsState, newResources );
-      newQualityLevel = std::max( newQualityLevel, auxQLevel );
-    }
-    if( resources >= bluePrint.oreRobotCost )
-    {
-      newResources = resources - bluePrint.oreRobotCost;
-      std::get<0>( newRobot ) += 1;
-      newResources = newResources + robotsState;
-      newRobotsState = robotsState + newRobot;
-      long long auxQLevel = computeGeodes( time - 1, bluePrint, newRobotsState, newResources );
-      newQualityLevel = std::max( newQualityLevel, auxQLevel );
-    }
-  }
+  //
+  //if( anyintuple( canbuildrobot ) )
+  //{
+  //  if( resources >= blueprint.georobotcost )
+  //  {
+  //    newresources = resources - blueprint.georobotcost;
+  //    std::get<3>( newrobot ) += 1;
+  //    newresources = newresources + robotsstate;
+  //    newrobotsstate = robotsstate + newrobot;
+  //    long long auxqlevel = computegeodes( time - 1, blueprint, newrobotsstate, newresources );
+  //    newqualitylevel = std::max( newqualitylevel, auxqlevel );
+  //  }
+  //  if( resources >= blueprint.obsirobotcost )
+  //  {
+  //    newresources = resources - blueprint.obsirobotcost;
+  //    std::get<2>( newrobot ) += 1;
+  //    newresources = newresources + robotsstate;
+  //    newrobotsstate = robotsstate + newrobot;
+  //    long long auxqlevel = computegeodes( time - 1, blueprint, newrobotsstate, newresources );
+  //    newqualitylevel = std::max( newqualitylevel, auxqlevel );
+  //  }
+  //  if( resources >= blueprint.clayrobotcost )
+  //  {
+  //    newresources = resources - blueprint.clayrobotcost;
+  //    std::get<1>( newrobot ) += 1;
+  //    newresources = newresources + robotsstate;
+  //    newrobotsstate = robotsstate + newrobot;
+  //    long long auxqlevel = computegeodes( time - 1, blueprint, newrobotsstate, newresources );
+  //    newqualitylevel = std::max( newqualitylevel, auxqlevel );
+  //  }
+  //  if( resources >= blueprint.orerobotcost )
+  //  {
+  //    newresources = resources - blueprint.orerobotcost;
+  //    std::get<0>( newrobot ) += 1;
+  //    newresources = newresources + robotsstate;
+  //    newrobotsstate = robotsstate + newrobot;
+  //    long long auxqlevel = computegeodes( time - 1, blueprint, newrobotsstate, newresources );
+  //    newqualitylevel = std::max( newqualitylevel, auxqlevel );
+  //  }
+  //}
 
-  // Compute state without build robots
-  newResources = resources + robotsState;
-  long long qualityLevel = computeGeodes( time - 1, bluePrint, robotsState, newResources );
+  //// compute state without build robots
+  //newresources = resources + robotsstate;
+  //long long qualitylevel = computegeodes( time - 1, blueprint, robotsstate, newresources );
 
-  return std::max( qualityLevel, newQualityLevel );
+  //return std::max( qualitylevel, newqualitylevel );
+  return 0;
 }
 
 void day19Part1()
@@ -134,7 +142,9 @@ void day19Part1()
   {
     OreClayObsiGeo res;
     OreClayObsiGeo robots( 1, 0, 0, 0 );
-    qualityLevel += computeGeodes( numMinutes, bp, robots, res );
+    int geodes = 0;
+    computeGeodes( numMinutes, geodes, bp, robots, res );
+    qualityLevel += geodes * bp.id;
   }
 
   long long result = qualityLevel;

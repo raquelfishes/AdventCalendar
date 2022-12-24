@@ -7,8 +7,8 @@ class Vector2
 {
 
 public:
-  Vector2() = default;
-  //Vector2(const T& v) : x(v),y(v){}
+  Vector2() : x( 0 ), y( 0 ) {};
+  Vector2(const T& v) : x(v),y(v){}
   Vector2(const T& x, const T& y) : x(x), y(y){}
 
   void operator = (const Vector2& v) { x = v.x; y = v.y; }
