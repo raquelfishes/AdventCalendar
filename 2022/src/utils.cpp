@@ -72,6 +72,12 @@ int char2int(const char c)
   return (c - '0');
 }
 
+char int2char( const int i )
+{
+  return '0' + i;
+}
+
+
 int charLowerCase2int( const char c )
 {
   return ( c - 'a' );

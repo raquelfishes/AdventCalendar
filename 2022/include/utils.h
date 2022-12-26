@@ -119,6 +119,8 @@ bool readDocumentFromEmptyLine( const std::string path, std::vector<T>& values )
 
 
 int char2int(const char c);
+char int2char( const int i );
+
 int charLowerCase2int( const char c );
 int charUpperCase2int( const char c );
 
