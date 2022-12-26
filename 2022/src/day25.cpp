@@ -1,4 +1,4 @@
-#include "std_includes.h"
+﻿#include "std_includes.h"
 #include "resource.h"
 #include "utils.h"
 
@@ -103,5 +103,5 @@ void day25Part1()
 void day25Part2()
 {
   long long result = 0;
-  printf("The solution for part 2 is: %lli \n", result);
+  printf("Merry christmas!!");
 }
