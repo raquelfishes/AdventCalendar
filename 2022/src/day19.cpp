@@ -81,6 +81,13 @@ int computeGeodes( const int time, int& maxGeodes, const BluePrint& bluePrint, c
   OreClayObsiGeo newResources = resources;
   OreClayObsiGeo canBuildRobot = bluePrint.canBuildRobot( resources );
   long long newQualityLevel = std::numeric_limits<long long>::min();
+
+  // Check what can do
+  if( resources >= bluePrint.geoRobotCost )
+  {
+
+  }
+
   //
   //if( anyintuple( canbuildrobot ) )
   //{
