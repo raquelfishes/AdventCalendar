@@ -87,38 +87,127 @@ void day22Part1()
 
 Coord getNextPosCube(const Coord& curr, const std::vector<Coord>& moveV, int& moveIndex, const Grid<char>& grid, const int sizeSide )
 {
-  Coord result = curr;
+  //std::cout << " (" << curr.second+1 << ", " << curr.first+1 << ") || ";
+  Coord result = Coord(curr.first, curr.second);
   result.first = result.first + moveV[moveIndex].first;
   result.second = result.second + moveV[moveIndex].second;
   if (!grid.isValidCoord(result) || grid.getValue(result) == ' ' )
   {
-    if (result.first < 0)
+    //std::cout << "From: " << curr.first << ", " << curr.second;
+    int cubeX = curr.first / sizeSide;
+    int cubeY = curr.second / sizeSide;
+
+    int x = curr.first % sizeSide;
+    int y = curr.second % sizeSide;
+
+    if( cubeY == 0 && cubeX == 1 )
     {
-      // Could be 2 -> 1 || 3->1
+      if( moveIndex == moveDir::UP )
+      {
+        result.second = (sizeSide*3) + x;
+      }
+      else
+      {
+        result.second = ( sizeSide * 3 ) - 1 - y;
+      }
+      moveIndex = moveDir::RIGHT;
+      result.first = 0;
     }
-    if (result.first >= grid.sizeX)
+    else if( cubeY == 0 && cubeX == 2 )
     {
-      // 5 -> 6
+      if( moveIndex == moveDir::UP )
+      {
+        // moveIndex doesn't change
+        result.first = x ;
+        result.second = grid.sizeY - 1;
+      }
+      else if( moveIndex == moveDir::RIGHT )
+      {
+        moveIndex = moveDir::LEFT;
+        result.first = (sizeSide * 2) - 1;
+        result.second = (sizeSide*3) - 1 - y ;
+      }
+      else
+      {
+        moveIndex = moveDir::LEFT;
+        result.first = ( sizeSide * 2 ) - 1;
+        result.second = sizeSide + x;
+      }
     }
-    //Compute where to move
-    if (result.first < 0) result.first = grid.sizeX - 1;
-    if (result.first >= grid.sizeX) result.first = 0;
-    if (result.second < 0) result.second = grid.sizeY - 1;
-    if (result.second >= grid.sizeY) result.second = 0;
+    else if( cubeX == 1 && cubeY == 1 )
+    {
+      if( moveIndex == moveDir::RIGHT )
+      {
+        moveIndex = moveDir::UP;
+        result.first = (sizeSide * 2) + y;
+        result.second = sizeSide - 1;
+      }
+      else
+      {
+        moveIndex = moveDir::DOWN;
+        result.first = y;
+        result.second = (sizeSide * 2);
+      }
+    }
+    else if( cubeY == 2 && cubeX == 0 )
+    {
+      if( moveIndex == moveDir::LEFT )
+      {
+        result.second = sizeSide - 1 - y;
+      }
+      else
+      {
+        result.second = sizeSide + x;
+      }
+      moveIndex = moveDir::RIGHT;
+      result.first = sizeSide;
+    }
+    else if( cubeY == 2 && cubeX == 1 )
+    {
+      if( moveIndex == moveDir::RIGHT )
+      {
+        // moveIndex doesn't change
+        result.first = grid.sizeX - 1;
+        result.second = sizeSide - 1 - y;
+      }
+      else
+      {
+        result.first = sizeSide-1;
+        result.second = ( sizeSide * 3 ) + x;
+      }
+      moveIndex = moveDir::LEFT;
+    }
+    else if( cubeX == 0 && cubeY == 3 )
+    {
+      if( moveIndex == moveDir::LEFT )
+      {
+        moveIndex = moveDir::DOWN;
+        result.second = 0;
+        result.first = sizeSide + y;
+      }
+      else if( moveIndex == moveDir::RIGHT )
+      {
+        moveIndex = moveDir::UP;
+        result.second = ( sizeSide * 3 ) - 1;
+        result.first = sizeSide + y;
+      }
+      else
+      {
+        result.second = 0;
+        result.first = (sizeSide*2) + x;
+      }
+    }
+    //std::cout << " || To: " << result.first << ", " << result.second << std::endl;
   }
   return result;
 }
 
-
 void day22Part2()
 {
   std::vector<std::string> input;
-  readDocument(DAY22_TEST_PATH, input);
+  readDocument(DAY22_PATH, input);
 
   int moveIndex = 0;
-  std::vector<Coord> moveVector = { {1,0}, {0,1}, {-1,0}, {0,-1} };
-  std::vector<int> moveX = { 1, 0, -1, 0 };
-  std::vector<int> moveY = { 0, 1, 0, -1 };
 
   std::string instrucions = input.back();
   input.pop_back(); input.pop_back();
@@ -155,21 +244,17 @@ void day22Part2()
 
     for (int i = 0; i < countInstr; ++i)
     {
-      Coord auxPosition = getNextPosCube(currPosition, moveVector, moveIndex, grid, sizeSide);
-      char aux = grid.getValue(auxPosition);
-      while (aux == ' ')
-      {
-        auxPosition = getNextPosCube(auxPosition, moveVector, moveIndex, grid, sizeSide);
-        aux = grid.getValue(auxPosition);
-      }
-      if (aux == '#')
+      int auxMoveIndex = moveIndex;
+      Coord auxPosition = getNextPosCube(currPosition, moveVector, auxMoveIndex, grid, sizeSide);
+      if( grid.getValue( auxPosition ) == '#' )
       {
         break;
       }
       currPosition = auxPosition;
+      moveIndex = auxMoveIndex;
     }
-    if (instrucions[instrIndex] == 'R') moveIndex = ( moveIndex + 3 ) % moveX.size();
-    else if (instrucions[instrIndex] == 'L') moveIndex = ( moveIndex + 1 ) % moveX.size();
+    if (instrucions[instrIndex] == 'R') moveIndex = ( moveIndex + 1 ) % moveVector.size();
+    else if (instrucions[instrIndex] == 'L') moveIndex = ( moveIndex - 1 ) % moveVector.size();
     instrIndex++;
   }
 
@@ -177,4 +262,3 @@ void day22Part2()
   long long result = ( 1000 * ( currPosition.second + 1 ) ) + ( 4 * ( currPosition.first + 1 ) ) + moveIndex;
   printf("The solution for part 2 is: %lli \n", result);
 }
-
