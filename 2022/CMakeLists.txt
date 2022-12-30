@@ -27,12 +27,11 @@ file( GLOB HEADER_FILES
   # General
   ${INCLUDE_DIR}/utils.h
   ${INCLUDE_DIR}/ansi_colors.h
-  # Day problems
   ${INCLUDE_DIR}/adventdays_fwd.h
-  ${INCLUDE_DIR}/sonar_sweep.h
-  ${INCLUDE_DIR}/dive.h
   ${INCLUDE_DIR}/grid.h
   ${INCLUDE_DIR}/vector2.h
+  # Day problems
+  ${INCLUDE_DIR}/day16.h
 )
 
 #Source files
