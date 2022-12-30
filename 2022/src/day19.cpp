@@ -2,6 +2,9 @@
 #include "resource.h"
 #include "utils.h"
 
+enum class Action{ORE=0, CLAY=1, OBSI=2, GEO=3, WAIT = 0};
+const std::vector<Action> actions{ Action::ORE, Action::CLAY, Action::OBSI, Action::GEO, Action::WAIT };
+
 typedef std::tuple<int, int, int, int> OreClayObsiGeo;
 OreClayObsiGeo operator-( const OreClayObsiGeo& op1, const OreClayObsiGeo& op2 )
 {
@@ -42,6 +45,9 @@ struct BluePrint
     clayRobotCost = std::make_tuple( std::stoi( values[3] ), 0, 0, 0 );
     obsiRobotCost = std::make_tuple( std::stoi( values[4] ), std::stoi( values[5] ), 0, 0 );
     geoRobotCost = std::make_tuple( std::stoi( values[6] ), 0, std::stoi( values[7] ), 0 );
+
+    int maxOre = std::max( std::get<0>( oreRobotCost ), std::max( std::get<0>( clayRobotCost ), std::max( std::get<0>( obsiRobotCost ), std::get<0>( geoRobotCost ) ) ) );
+    maxCostRobots = std::make_tuple( maxOre, std::get<1>( obsiRobotCost ), std::get<2>( geoRobotCost ), 0 );
   }
 
   OreClayObsiGeo canBuildRobot( const OreClayObsiGeo& res ) const
@@ -59,98 +65,127 @@ struct BluePrint
   OreClayObsiGeo clayRobotCost;
   OreClayObsiGeo obsiRobotCost;
   OreClayObsiGeo geoRobotCost;
+  OreClayObsiGeo maxCostRobots;
 };
 
-int computeGeodes( const int time, int& maxGeodes, const BluePrint& bluePrint, const OreClayObsiGeo& robotsState, const OreClayObsiGeo& resources )
+inline int calcTheoreticalMax( const int& time, const OreClayObsiGeo& resources, const OreClayObsiGeo& robotsState )
 {
-  if( time <= 0 )
+  return std::get<3>( resources ) + ( time + 2 * std::get<3>( robotsState ) ) * time / 2;
+}
+
+bool isActionHelpful( const Action& action, const OreClayObsiGeo& bluePrintMaxCosts, const OreClayObsiGeo& robotsState )
+{
+  if( action == Action::ORE )
   {
-    maxGeodes = std::max(maxGeodes, std::get<3>( resources ));
+    return std::get<0>( robotsState ) < std::get<0>( bluePrintMaxCosts );
   }
-
-  int theoricalMaxGeodes = std::get<3>( resources );
-  for( int i = time, j = 0; i >= 0; i--, j++ )
+  if( action == Action::CLAY )
   {
-    theoricalMaxGeodes += ( std::get<3>( robotsState ) + j ) * i;
+    return std::get<1>( robotsState ) < std::get<1>( bluePrintMaxCosts );
   }
-  if( maxGeodes > 0 && theoricalMaxGeodes < maxGeodes ) return 0;
-
-  //OreClayObsiGeo qualityLevel = std::make_tuple( 0, 0, 0, 0 );
-  OreClayObsiGeo newRobot = std::make_tuple(0, 0, 0, 0);
-  OreClayObsiGeo newRobotsState = robotsState;
-  OreClayObsiGeo newResources = resources;
-  OreClayObsiGeo canBuildRobot = bluePrint.canBuildRobot( resources );
-  long long newQualityLevel = std::numeric_limits<long long>::min();
-
-  // Check what can do
-  if( resources >= bluePrint.geoRobotCost )
+  if( action == Action::OBSI )
   {
-
+    return std::get<2>( robotsState ) < std::get<2>( bluePrintMaxCosts );
   }
+  return true;
+}
 
-  //
-  //if( anyintuple( canbuildrobot ) )
-  //{
-  //  if( resources >= blueprint.georobotcost )
-  //  {
-  //    newresources = resources - blueprint.georobotcost;
-  //    std::get<3>( newrobot ) += 1;
-  //    newresources = newresources + robotsstate;
-  //    newrobotsstate = robotsstate + newrobot;
-  //    long long auxqlevel = computegeodes( time - 1, blueprint, newrobotsstate, newresources );
-  //    newqualitylevel = std::max( newqualitylevel, auxqlevel );
-  //  }
-  //  if( resources >= blueprint.obsirobotcost )
-  //  {
-  //    newresources = resources - blueprint.obsirobotcost;
-  //    std::get<2>( newrobot ) += 1;
-  //    newresources = newresources + robotsstate;
-  //    newrobotsstate = robotsstate + newrobot;
-  //    long long auxqlevel = computegeodes( time - 1, blueprint, newrobotsstate, newresources );
-  //    newqualitylevel = std::max( newqualitylevel, auxqlevel );
-  //  }
-  //  if( resources >= blueprint.clayrobotcost )
-  //  {
-  //    newresources = resources - blueprint.clayrobotcost;
-  //    std::get<1>( newrobot ) += 1;
-  //    newresources = newresources + robotsstate;
-  //    newrobotsstate = robotsstate + newrobot;
-  //    long long auxqlevel = computegeodes( time - 1, blueprint, newrobotsstate, newresources );
-  //    newqualitylevel = std::max( newqualitylevel, auxqlevel );
-  //  }
-  //  if( resources >= blueprint.orerobotcost )
-  //  {
-  //    newresources = resources - blueprint.orerobotcost;
-  //    std::get<0>( newrobot ) += 1;
-  //    newresources = newresources + robotsstate;
-  //    newrobotsstate = robotsstate + newrobot;
-  //    long long auxqlevel = computegeodes( time - 1, blueprint, newrobotsstate, newresources );
-  //    newqualitylevel = std::max( newqualitylevel, auxqlevel );
-  //  }
-  //}
+bool isActionPossible( const Action& action, const BluePrint& bluePrint, const OreClayObsiGeo& resources )
+{
+  if( action == Action::ORE )
+  {
+    return resources >= bluePrint.oreRobotCost;
+  }
+  if( action == Action::CLAY )
+  {
+    return resources >= bluePrint.clayRobotCost;
+  }
+  if( action == Action::OBSI )
+  {
+    return resources >= bluePrint.obsiRobotCost;
+  }
+  return resources >= bluePrint.geoRobotCost;
+}
 
-  //// compute state without build robots
-  //newresources = resources + robotsstate;
-  //long long qualitylevel = computegeodes( time - 1, blueprint, robotsstate, newresources );
+void updateState( int& time, OreClayObsiGeo& resources, OreClayObsiGeo& robotsState )
+{
+  time--;
+  resources = resources + robotsState;
+}
 
-  //return std::max( qualitylevel, newqualitylevel );
-  return 0;
+void performAction( int& time, const Action& action, const BluePrint& bluePrint, OreClayObsiGeo& resources, OreClayObsiGeo& robotsState )
+{
+  if( action == Action::ORE )
+  {
+    resources = resources - bluePrint.oreRobotCost;
+    updateState( time, resources, robotsState );
+    std::get<0>( robotsState )++;
+  }
+  if( action == Action::CLAY )
+  {
+    resources = resources - bluePrint.clayRobotCost;
+    updateState( time, resources, robotsState );
+    std::get<1>( robotsState )++;
+  }
+  if( action == Action::OBSI )
+  {
+    resources = resources - bluePrint.obsiRobotCost;
+    updateState( time, resources, robotsState );
+    std::get<2>( robotsState )++;
+  }
+  if( action == Action::GEO )
+  {
+    resources = resources - bluePrint.geoRobotCost;
+    updateState( time, resources, robotsState );
+    std::get<3>( robotsState )++;
+  }
+}
+
+void computeGeodesDFS( int time, int& maxGeodes, const BluePrint& bluePrint, const Action& action, OreClayObsiGeo robotsState, OreClayObsiGeo resources )
+{
+  // Is action helpful
+  if( !isActionHelpful( action, bluePrint.maxCostRobots, robotsState ) ) return;
+  if( calcTheoreticalMax( time, resources, robotsState ) <= maxGeodes ) return;
+
+  while( time )
+  {
+    if( isActionPossible( action, bluePrint, resources ) )
+    {
+      OreClayObsiGeo newRobotsState = robotsState;
+      OreClayObsiGeo newResources = resources;
+
+      performAction( time, action, bluePrint, newResources, newRobotsState );
+      for( auto& newAction : actions )
+      {
+        computeGeodesDFS( time, maxGeodes, bluePrint, newAction, newRobotsState, newResources );
+      }
+      return;
+    }
+    else
+    {
+      updateState( time, resources, robotsState );
+    }
+  }
+  maxGeodes = std::max( maxGeodes, std::get<3>( resources ) );
 }
 
 void day19Part1()
 {
   std::vector<BluePrint> input;
-  readDocument<BluePrint>( DAY19_TEST_PATH, input );
+  readDocument<BluePrint>( DAY19_PATH, input );
 
   const int numMinutes = 24;
 
   long long qualityLevel = 0;
   for( const auto& bp : input )
   {
-    OreClayObsiGeo res;
-    OreClayObsiGeo robots( 1, 0, 0, 0 );
     int geodes = 0;
-    computeGeodes( numMinutes, geodes, bp, robots, res );
+    for( auto& newAction : actions )
+    {
+      OreClayObsiGeo res;
+      OreClayObsiGeo robots( 1, 0, 0, 0 );
+      computeGeodesDFS( numMinutes, geodes, bp, newAction, robots, res );
+    }
     qualityLevel += geodes * bp.id;
   }
 
@@ -161,6 +196,25 @@ void day19Part1()
 
 void day19Part2()
 {
-  long long result = 0;
+  std::vector<BluePrint> input;
+  readDocument<BluePrint>( DAY19_PATH, input );
+
+  const int numMinutes = 32;
+
+  long long qualityLevel = 1;
+  for( int i=0; i<3; ++i)
+  {
+    BluePrint bp = input[i];
+    int geodes = 0;
+    for( auto& newAction : actions )
+    {
+      OreClayObsiGeo res;
+      OreClayObsiGeo robots( 1, 0, 0, 0 );
+      computeGeodesDFS( numMinutes, geodes, bp, newAction, robots, res );
+    }
+    qualityLevel *= geodes;
+  }
+
+  long long result = qualityLevel;
   printf("The solution for part 2 is: %lli \n", result);
 }
