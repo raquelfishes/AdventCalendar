@@ -98,7 +98,6 @@ public class day04 : MonoBehaviour
                         auxStack.Push(countCards);
                     }
                 }
-
             }
             while (auxStack.Count > 0)
             {
