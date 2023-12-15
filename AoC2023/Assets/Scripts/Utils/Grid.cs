@@ -35,6 +35,75 @@ public class Grid<T>
         gridArray = Enumerable.Repeat(initValue, this.Width*this.Height).ToList();
     }
 
+    public Grid(Grid<T> g)
+    {
+        this.Width = g.Width;
+        this.Height = g.Height;
+        //gridArray = new List<T>(width*height);
+        gridArray = new List<T>(g.gridArray);
+    }
+
+    public T this[int x, int y]
+    {
+        get => gridArray[GetIndex(x,y)];
+        set => gridArray[GetIndex(x,y)] = value;
+    }
+
+    public static bool operator ==(Grid<T> a, Grid<T> b)
+    {
+        if (a.Width != b.Width || a.Height != b.Height)
+        {
+            return false;
+        }
+        for (int i = 0; i < a.gridArray.Count; i++)
+        {
+            if (!a.gridArray[i].Equals(b.gridArray[i]))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static bool operator !=(Grid<T> a, Grid<T> b)
+    {
+        return !(a == b);
+    }
+
+    public override string ToString()
+    {
+        string aux = "";
+        for (int i = 0; i < Height; i++)
+        {
+            for (int j = 0; j < Width; j++) 
+            {
+                aux += $"{System.Convert.ToString(gridArray[GetIndex(j,i)]),3}";
+            }
+            aux += "\n";
+        }
+        return aux;
+    }
+
+    public override bool Equals(object o)
+    {
+       if(o == null)
+           return false;
+
+       var second = o as Grid<T>;
+       
+       return second != null && this == second;
+    }
+
+    public override int GetHashCode()
+    {
+        int result = 1;
+        foreach (var item in gridArray)
+        {
+            result = result * 31 + item.GetHashCode();
+        }
+        return result;
+    }
+
     public void ResizeGrid(in int width, in int height)
     {
         this.Width = width;
@@ -54,6 +123,11 @@ public class Grid<T>
 
     public void AddRow(in T[] row)
     {
+        if ( Width == 0)
+        {
+            this.Width = row.Length;
+        }
+
         if ( row.Length != Width)
         {
             Debug.LogError("Row lenght is not equal to grid width");

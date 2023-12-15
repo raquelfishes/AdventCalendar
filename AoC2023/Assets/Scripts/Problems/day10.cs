@@ -17,34 +17,6 @@ public class day10 : MonoBehaviour
         part2();
     }
 
-    public void myPrintGrid(Grid<char> grid)
-    {
-        string gridText = "";
-        for (int i=0; i<grid.Height; i++)
-        {
-            for (int j=0; j<grid.Width; j++)
-            {
-                gridText += grid.GetValue(j,i);
-            }
-            gridText+= "\n";
-        }
-        UnityEngine.Debug.Log(gridText);
-    }
-
-    public void myPrintGrid(Grid<int> grid)
-    {
-        string gridText = "";
-        for (int i=0; i<grid.Height; i++)
-        {
-            for (int j=0; j<grid.Width; j++)
-            {
-                gridText += Convert.ToString(grid.GetValue(j,i));
-            }
-            gridText+= "\n";
-        }
-        UnityEngine.Debug.Log(gridText);
-    }
-
     void part1()
     {
         StreamReader reader = File.OpenText(path);
@@ -163,7 +135,7 @@ public class day10 : MonoBehaviour
     
     void part2()
     {
-       StreamReader reader = File.OpenText(path);
+        StreamReader reader = File.OpenText(path);
         string line = null;
         long result = 0;
         Vector2Int startPosition = new Vector2Int(0,0);
@@ -192,50 +164,40 @@ public class day10 : MonoBehaviour
         TraverseGrid(distanceGrid, grid, startPosition, ref maxDistance);
         distanceGrid.printGrid();
 
-        // Convert S for her char symbol
+        
+        //grid.printGrid();
+
+
+        // Replace S with his correct symbol
+        if ((grid.IsValidCoord(startPosition.x-1, startPosition.y) && grid.IsValidCoord(startPosition.x+1, startPosition.y)) &&
+             ((distanceGrid.GetValue(startPosition.x-1, startPosition.y) == 1) && (grid.GetValue(startPosition.x+1, startPosition.y) == 1)))
         {
-            if ( ( distanceGrid.IsValidCoord(startPosition.x-1, startPosition.y) && 
-                   distanceGrid.IsValidCoord(startPosition.x+1, startPosition.y) ) && 
-                 ( distanceGrid.GetValue(new Vector2Int(startPosition.x-1, startPosition.y) ) != -1 &&
-                   distanceGrid.GetValue(new Vector2Int(startPosition.x+1, startPosition.y) ) != -1 ) )
-            {
-                grid.SetValue(startPosition, '-');
-            }
-            if ( ( distanceGrid.IsValidCoord(startPosition.x, startPosition.y-1) && 
-                   distanceGrid.IsValidCoord(startPosition.x, startPosition.y+1) ) && 
-                 ( distanceGrid.GetValue(new Vector2Int(startPosition.x, startPosition.y-1) ) != -1 &&
-                   distanceGrid.GetValue(new Vector2Int(startPosition.x, startPosition.y+1) ) != -1 ) )
-            {
-                grid.SetValue(startPosition, '|');
-            }
-            if ( ( distanceGrid.IsValidCoord(startPosition.x-1, startPosition.y) && 
-                   distanceGrid.IsValidCoord(startPosition.x, startPosition.y+1) ) && 
-                 ( distanceGrid.GetValue(new Vector2Int(startPosition.x-1, startPosition.y) ) != -1 &&
-                   distanceGrid.GetValue(new Vector2Int(startPosition.x, startPosition.y+1) ) != -1 ) )
-            {
-                grid.SetValue(startPosition, '7');
-            }
-            if ( ( distanceGrid.IsValidCoord(startPosition.x-1, startPosition.y) && 
-                   distanceGrid.IsValidCoord(startPosition.x, startPosition.y-1) ) && 
-                 ( distanceGrid.GetValue(new Vector2Int(startPosition.x-1, startPosition.y) ) != -1 &&
-                   distanceGrid.GetValue(new Vector2Int(startPosition.x, startPosition.y-1) ) != -1 ) )
-            {
-                grid.SetValue(startPosition, 'J');
-            }
-            if ( ( distanceGrid.IsValidCoord(startPosition.x+1, startPosition.y) && 
-                   distanceGrid.IsValidCoord(startPosition.x, startPosition.y+1) ) && 
-                 ( distanceGrid.GetValue(new Vector2Int(startPosition.x+1, startPosition.y) ) != -1 &&
-                   distanceGrid.GetValue(new Vector2Int(startPosition.x, startPosition.y+1) ) != -1 ) )
-            {
-                grid.SetValue(startPosition, 'F');
-            }
-            if ( ( distanceGrid.IsValidCoord(startPosition.x+1, startPosition.y) && 
-                   distanceGrid.IsValidCoord(startPosition.x, startPosition.y-1) ) && 
-                 ( distanceGrid.GetValue(new Vector2Int(startPosition.x+1, startPosition.y) ) != -1 &&
-                   distanceGrid.GetValue(new Vector2Int(startPosition.x, startPosition.y-1) ) != -1 ) )
-            {
-                grid.SetValue(startPosition, 'L');
-            }
+            grid.SetValue(startPosition, '-');
+        }
+        else if ( ( grid.IsValidCoord(startPosition.x, startPosition.y-1) && grid.IsValidCoord(startPosition.x, startPosition.y+1) ) &&
+             ( (distanceGrid.GetValue(startPosition.x, startPosition.y-1) == 1) && (distanceGrid.GetValue(startPosition.x, startPosition.y+1) == 1) ) )
+        {
+            grid.SetValue(startPosition, '|');
+        }
+        else if ( ( grid.IsValidCoord(startPosition.x-1, startPosition.y) && grid.IsValidCoord(startPosition.x, startPosition.y-1) ) &&
+             ( (distanceGrid.GetValue(startPosition.x-1, startPosition.y) == 1) && (distanceGrid.GetValue(startPosition.x, startPosition.y-1) == 1) ) )
+        {
+            grid.SetValue(startPosition, 'J');
+        }
+        else if ( ( grid.IsValidCoord(startPosition.x+1, startPosition.y) && grid.IsValidCoord(startPosition.x, startPosition.y-1) ) &&
+             ( (distanceGrid.GetValue(startPosition.x+1, startPosition.y) == 1) && (distanceGrid.GetValue(startPosition.x, startPosition.y-1) == 1) ) )
+        {
+            grid.SetValue(startPosition, 'L');
+        }
+        else if ( ( grid.IsValidCoord(startPosition.x-1, startPosition.y) && grid.IsValidCoord(startPosition.x, startPosition.y+1) ) &&
+             ( (distanceGrid.GetValue(startPosition.x-1, startPosition.y) == 1) && (distanceGrid.GetValue(startPosition.x, startPosition.y+1) == 1) ) )
+        {
+            grid.SetValue(startPosition, '7');
+        }
+        else if ( ( grid.IsValidCoord(startPosition.x+1, startPosition.y) && grid.IsValidCoord(startPosition.x, startPosition.y+1) ) &&
+             ( (distanceGrid.GetValue(startPosition.x+1, startPosition.y) == 1) && (distanceGrid.GetValue(startPosition.x, startPosition.y+1) == 1) ) )
+        {
+            grid.SetValue(startPosition, 'F');
         }
 
         grid.printGrid();
@@ -255,6 +217,8 @@ public class day10 : MonoBehaviour
             }
         }
 
+
+
         Grid<int> colorGrid = new Grid<int>(grid.Width+2, grid.Height+2, -1);
         for(int i=0; i<grid.Width; ++i)
         {
@@ -262,87 +226,50 @@ public class day10 : MonoBehaviour
             {
                 if (distanceGrid.GetValue(i,j) != -1)
                 {
-                    colorGrid.SetValue(i+1,j+1, 1);
+                    if (grid2.GetValue(i+1,j+1)=='-')
+                    {
+                        colorGrid.SetValue(i+1,j+1, 2);
+                    }
+                    else
+                    {
+                        colorGrid.SetValue(i+1,j+1, 1);
+                    }
                 }
             }
         }
 
         Debug.Log("Initial colorGrid");
         colorGrid.printGrid();
-        colorGrid.SetValue(Vector2Int.zero, 0);
 
-        // Initial position from the borders
-        FloodGrid(colorGrid, grid2, Vector2Int.zero);
+        bool outside = true;
+        for (int i=0; i<colorGrid.Height; ++i)
+        {
+            outside = true;
+            for (int j=0; j<colorGrid.Width; ++j)
+            {
+                if (colorGrid.GetValue(j,i) == 1)
+                {
+                    outside = !outside;
+                }
+                else if (colorGrid.GetValue(j,i) == -1)
+                {
+                    if (outside)
+                    {
+                        colorGrid.SetValue(j,i, 0);
+                    }
+                }
+            }
+        }
+
+        Debug.Log("Final colorGrid");
+        colorGrid.printGrid();
 
         // Sum all the negative values in the colorGrid
         result = colorGrid.gridArray.Sum(x => x < 0 ? 1 : 0);
 
         Debug.Log("Result: " + Convert.ToString(result));
     }
-
-    void AddNeighboursToVisit2(Vector2Int position, Grid<char> grid, Grid<int> colorGrid, ref Queue<Tuple<Vector2Int, List<Vector2Int>>> nextNeighboursToVisit)
-    {
-        List<Vector2Int> neighbours = new List<Vector2Int>();
-        neighbours.Add(new Vector2Int(position.x, position.y+1)); 
-        neighbours.Add(new Vector2Int(position.x, position.y-1)); 
-        neighbours.Add(new Vector2Int(position.x+1, position.y)); 
-        neighbours.Add(new Vector2Int(position.x-1, position.y)); 
-        Tuple<Vector2Int, List<Vector2Int>> neighboursToVisit = new Tuple<Vector2Int, List<Vector2Int>>(position, new List<Vector2Int>());
-        foreach(Vector2Int neighbour in neighbours)
-        {
-            if ( grid.IsValidCoord(neighbour) )
-            {
-                if ( colorGrid.GetValue(neighbour) == -1 || ( colorGrid.GetValue(neighbour) == 1 && CanPassColor(position, neighbour, grid) ) )
-                    neighboursToVisit.Item2.Add(neighbour);
-            }
-        }
-        nextNeighboursToVisit.Enqueue(neighboursToVisit);
-    }
-
-    bool CanPassColor(Vector2Int position, Vector2Int neighbour, Grid<char> grid)
-    {
-        Vector2Int direction = neighbour - position;
-        if ( direction == -Vector2Int.up || direction == -Vector2Int.down )
-        {
-            return grid.GetValue(position) != '-';
-        }
-        if ( direction == Vector2Int.right || direction == Vector2Int.left )
-        {
-            return grid.GetValue(position) != '|';
-        }
-
-        return false;
-    }
-
-    void FloodGrid(Grid<int> colorGrid, Grid<char> grid, Vector2Int startPosition)
-    {
-        Queue<Tuple<Vector2Int, List<Vector2Int>>> nextNeighboursToVisit = new Queue<Tuple<Vector2Int, List<Vector2Int>>>();
-        AddNeighboursToVisit(startPosition, grid, colorGrid, ref nextNeighboursToVisit);
-
-        // Color grid = 1 for all points
-        while( nextNeighboursToVisit.Count > 0 )
-        {
-            Tuple<Vector2Int, List<Vector2Int>> nextNeighbourToVisit = nextNeighboursToVisit.Dequeue();
-            Vector2Int position = nextNeighbourToVisit.Item1;
-            foreach(Vector2Int neighbour in nextNeighbourToVisit.Item2)
-            {
-                if ( colorGrid.GetValue(neighbour) == -1 )
-                {
-                    colorGrid.SetValue(neighbour, 0);
-                    AddNeighboursToVisit2(neighbour, grid, colorGrid, ref nextNeighboursToVisit);
-                    continue;
-                }
-                if ( colorGrid.GetValue(neighbour) == 1 && CanPassColor(position, neighbour, grid) )
-                {
-                    colorGrid.SetValue(neighbour, 2);
-                    AddNeighboursToVisit2(neighbour, grid, colorGrid, ref nextNeighboursToVisit);
-                    continue;
-                }
-            }
-            colorGrid.printGrid();
-        }
-    }
-
+    //1392 too high
     
     // Update is called once per frame
     void Update()
