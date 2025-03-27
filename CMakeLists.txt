@@ -1,63 +1,140 @@
 cmake_minimum_required (VERSION 3.12)
 
-project(AdventCalendar
+project("AdventOfCode"
 VERSION 1.0.0
-DESCRIPTION "AdventOfCode 2020"
+DESCRIPTION "AdventOfCode"
 LANGUAGES C CXX)
 
+set(TARGET_NAME AoC)
+
 # Set minimum c++ version
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 20)
 
-set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/build")
+################
+# Sources
+################
 
-# Setting per day folders
-set(AOC_DAY1 "${CMAKE_CURRENT_SOURCE_DIR}/day1/.")
-set(AOC_DAY2 "${CMAKE_CURRENT_SOURCE_DIR}/day2/.")
-set(AOC_DAY3 "${CMAKE_CURRENT_SOURCE_DIR}/day3/.")
-set(AOC_DAY4 "${CMAKE_CURRENT_SOURCE_DIR}/day4/.")
-set(AOC_DAY5 "${CMAKE_CURRENT_SOURCE_DIR}/day5/.")
-set(AOC_DAY6 "${CMAKE_CURRENT_SOURCE_DIR}/day6/.")
-set(AOC_DAY7 "${CMAKE_CURRENT_SOURCE_DIR}/day7/.")
-set(AOC_DAY8 "${CMAKE_CURRENT_SOURCE_DIR}/day8/.")
-set(AOC_DAY9 "${CMAKE_CURRENT_SOURCE_DIR}/day9/.")
-set(AOC_DAY10 "${CMAKE_CURRENT_SOURCE_DIR}/day10/.")
-set(AOC_DAY11 "${CMAKE_CURRENT_SOURCE_DIR}/day11/.")
-set(AOC_DAY12 "${CMAKE_CURRENT_SOURCE_DIR}/day12/.")
-set(AOC_DAY13 "${CMAKE_CURRENT_SOURCE_DIR}/day13/.")
-set(AOC_DAY14 "${CMAKE_CURRENT_SOURCE_DIR}/day14/.")
-set(AOC_DAY15 "${CMAKE_CURRENT_SOURCE_DIR}/day15/.")
-set(AOC_DAY16 "${CMAKE_CURRENT_SOURCE_DIR}/day16/.")
-set(AOC_DAY17 "${CMAKE_CURRENT_SOURCE_DIR}/day17/.")
-set(AOC_DAY18 "${CMAKE_CURRENT_SOURCE_DIR}/day18/.")
-set(AOC_DAY19 "${CMAKE_CURRENT_SOURCE_DIR}/day19/.")
-set(AOC_DAY20 "${CMAKE_CURRENT_SOURCE_DIR}/day20/.")
-set(AOC_DAY21 "${CMAKE_CURRENT_SOURCE_DIR}/day21/.")
-set(AOC_DAY22 "${CMAKE_CURRENT_SOURCE_DIR}/day22/.")
-set(AOC_DAY23 "${CMAKE_CURRENT_SOURCE_DIR}/day23/.")
-set(AOC_DAY24 "${CMAKE_CURRENT_SOURCE_DIR}/day24/.")
+#Headers and source directories
+set( COMMON_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/common )
+
+#Header files                       
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/common
+                     ${CMAKE_CURRENT_SOURCE_DIR}/events/2024
+                     ${CMAKE_CURRENT_SOURCE_DIR}/events/2023
+)
+
+# Archivos específicos de cada año
+set(YEAR_2024_SOURCES
+    events/2024/design.h
+    events/2024/calendar/day01.cpp
+)
+
+# Archivos específicos de cada año
+set(YEAR_2023_SOURCES
+    events/2023/design.h
+    events/2023/calendar/day01.cpp
+)
+
+#Source files
+file( GLOB SOURCE_FILES
+  #Manually add all source files here
+  # General
+  ${CMAKE_CURRENT_SOURCE_DIR}/executable/main.cpp
+)
 
 
-add_subdirectory(${AOC_DAY1})
-add_subdirectory(${AOC_DAY2})
-add_subdirectory(${AOC_DAY3})
-add_subdirectory(${AOC_DAY4})
-add_subdirectory(${AOC_DAY5})
-add_subdirectory(${AOC_DAY6})
-add_subdirectory(${AOC_DAY7})
-add_subdirectory(${AOC_DAY8})
-add_subdirectory(${AOC_DAY9})
-add_subdirectory(${AOC_DAY10})
-add_subdirectory(${AOC_DAY11})
-add_subdirectory(${AOC_DAY12})
-add_subdirectory(${AOC_DAY13})
-add_subdirectory(${AOC_DAY14})
-add_subdirectory(${AOC_DAY15})
-add_subdirectory(${AOC_DAY16})
-add_subdirectory(${AOC_DAY17})
-add_subdirectory(${AOC_DAY18})
-add_subdirectory(${AOC_DAY19})
-add_subdirectory(${AOC_DAY20})
-add_subdirectory(${AOC_DAY21})
-add_subdirectory(${AOC_DAY22})
-add_subdirectory(${AOC_DAY23})
-add_subdirectory(${AOC_DAY24})
+###################
+#Create executable
+###################
+
+
+add_executable( ${TARGET_NAME} ${GENERATED_FILES} ${YEAR_2024_SOURCES} ${YEAR_2023_SOURCES} ${SOURCE_FILES} )
+
+
+# Organizar la estructura de carpetas en Visual Studio
+source_group("common" FILES ${COMMON_SOURCES})
+source_group("events\\2024" FILES ${YEAR_2024_SOURCES})
+source_group("events\\2023" FILES ${YEAR_2023_SOURCES})
+source_group("executable" FILES executable/main.cpp)
+
+
+##  
+##  # Versión mínima requerida de CMake
+##  cmake_minimum_required(VERSION 3.10)
+##  
+##  # Nombre del proyecto
+##  project(AdventOfCode)
+##  
+##  # Establecer el estándar de C++ (por ejemplo, C++17)
+##  set(CMAKE_CXX_STANDARD 17)
+##  set(CMAKE_CXX_STANDARD_REQUIRED True)
+##  
+##  # Incluir carpetas de cabeceras
+##  include_directories(
+##      ${PROJECT_SOURCE_DIR}/common
+##      ${PROJECT_SOURCE_DIR}/events/2024
+##      ${PROJECT_SOURCE_DIR}/events/2023
+##  )
+##  
+##  # Archivos comunes (utilidades compartidas)
+##  set(COMMON_SOURCES
+##      common/utils.cpp
+##  )
+##  
+##  # Archivos específicos de cada año
+##  set(YEAR_2024_SOURCES
+##      events/2024/calendar/day1.cpp
+##      events/2024/calendar/day2.cpp
+##  )
+##  
+##  set(YEAR_2023_SOURCES
+##      events/2023/calendar/day1.cpp
+##      events/2023/calendar/day2.cpp
+##  )
+##  
+##  # Ejecutable principal
+##  add_executable(advent_of_code
+##      executable/main.cpp
+##      ${COMMON_SOURCES}
+##      ${YEAR_2024_SOURCES}
+##      ${YEAR_2023_SOURCES}
+##  )
+##  
+##  # Configurar Google Test
+##  include(FetchContent)
+##  FetchContent_Declare(
+##      googletest
+##      GIT_REPOSITORY https://github.com/google/googletest.git
+##      GIT_TAG release-1.12.1
+##  )
+##  FetchContent_MakeAvailable(googletest)
+##  
+##  # Crear un objetivo para las pruebas de 2024
+##  set(TEST_2024_SOURCES
+##      events/2024/tests/test_day1.cpp
+##      events/2024/tests/test_day2.cpp
+##  )
+##  
+##  add_executable(tests_2024
+##      ${TEST_2024_SOURCES}
+##      ${YEAR_2024_SOURCES}
+##      ${COMMON_SOURCES}
+##  )
+##  target_link_libraries(tests_2024 gtest gtest_main)
+##  
+##  # Crear un objetivo para las pruebas de 2023
+##  set(TEST_2023_SOURCES
+##      events/2023/tests/test_day1.cpp
+##      events/2023/tests/test_day2.cpp
+##  )
+##  
+##  add_executable(tests_2023
+##      ${TEST_2023_SOURCES}
+##      ${YEAR_2023_SOURCES}
+##      ${COMMON_SOURCES}
+##  )
+##  target_link_libraries(tests_2023 gtest gtest_main)
+##  
+##  # Si necesitas enlazar bibliotecas externas
+##  # find_package(BibliotecaRequerida REQUIRED)
+##  # target_link_libraries(advent_of_code BibliotecaRequerida::BibliotecaRequerida)

@@ -3,6 +3,9 @@ Advent of Code is an Advent calendar of small programming puzzles for a variety 
 
 I have decide code the solutions in C++. If you want to launch the project just build the project with CMake.
 
+## Stars for each year
+
+
 **!!disclaimer!!** They are not the most efficient solutions
 
 ### <a name="Author">Author ✒️
