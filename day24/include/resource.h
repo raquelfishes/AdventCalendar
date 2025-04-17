@@ -1,1 +1,1 @@
-#define FILE_PATH "C:/Projects/RaquelFishes/AdventCalendar/day24/resource/day24.txt"
+#define FILE_PATH "C:/Projects/raquelfishes/AdventCalendar/day24/resource/day24.txt"

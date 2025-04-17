@@ -12,7 +12,9 @@
 //#include "adventdays_fwd.h"
 #include "ansi_colors.h"
 #include "design_base.h"
- 
+
+#include "../events/2021/design.h" 
+#include "../events/2022/design.h" 
 #include "../events/2023/design.h"  // Ruta relativa correcta
 #include "../events/2024/design.h"
 

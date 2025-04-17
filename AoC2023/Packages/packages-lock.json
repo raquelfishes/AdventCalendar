@@ -94,7 +94,11 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.burst": {
+<<<<<<< HEAD
       "version": "1.8.10",
+=======
+      "version": "1.8.11",
+>>>>>>> 05cef5e0de872a95006bab455befd1696f44e909
       "depth": 1,
       "source": "registry",
       "dependencies": {
@@ -143,7 +147,11 @@
       }
     },
     "com.unity.ide.rider": {
+<<<<<<< HEAD
       "version": "3.0.26",
+=======
+      "version": "3.0.27",
+>>>>>>> 05cef5e0de872a95006bab455befd1696f44e909
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -235,7 +243,11 @@
       }
     },
     "com.unity.test-framework": {
+<<<<<<< HEAD
       "version": "1.4.0",
+=======
+      "version": "1.4.1",
+>>>>>>> 05cef5e0de872a95006bab455befd1696f44e909
       "depth": 0,
       "source": "registry",
       "dependencies": {
