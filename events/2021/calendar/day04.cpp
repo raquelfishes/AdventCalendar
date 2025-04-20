@@ -1,113 +1,222 @@
-#include "dive.h"
 
 #include <iostream>
+#include <sstream>
 #include <fstream>
 #include <vector>
 #include <string>
+#include <bitset>
 #include <regex>
 
-#include "resource.h"
+#include "resources.h"
 
+static const int boardSize = 5;
 
-struct Instruction
+struct board
 {
-  std::string type;
-  unsigned int value;
-
-  Instruction(std::string t, std::string val) : type(t)
-  {
-    value = std::stoi(val);
-  }
+    int value[5][5];
 };
 
-void divePart1()
+bool checkHasLine(const board &b, const int x, const int y)
 {
-  // Open numbers file
-  std::ifstream myfile(DAY2_PATH);
-  if ( !myfile.is_open() )
-  {
-    std::cout << "Error, no file founded" << std::endl;
-    return;
-  }
-
-  std::vector<Instruction> commands;
-  std::string line;
-  std::regex expr("(\\w+) (\\d+)");
-  std::smatch sm;
-
-  while (getline(myfile, line))
-  {
-    if (std::regex_search(line, sm, expr))
+    int count = 0;
+    // Check row
+    for (int i = 0; i < boardSize; ++i)
     {
-      Instruction inst(sm[1], sm[2]);
-      commands.push_back(inst);
+        if (b.value[x][i] != -1)
+        {
+            break;
+        }
+        ++count;
     }
-  }
-  if (commands.empty())
-  {
-    std::cout << "Error, no seats at file" << std::endl;
-  }
+    if (count == 5)
+        return true;
 
-  // Part 1:
-  int x = 0;
-  int y = 0;
-  for (auto& cmd : commands)
-  {
-    if (cmd.type == "forward")
-      x += cmd.value;
-    else if (cmd.type == "down")
-      y += cmd.value;
-    else if (cmd.type == "up")
-      y -= cmd.value;
-  }
-  int result = x * y;
-  printf("The solution for part 1 is: %i \n", result);
-
+    // Check col
+    count = 0;
+    for (int i = 0; i < boardSize; ++i)
+    {
+        if (b.value[i][y] != -1)
+        {
+            break;
+        }
+        ++count;
+    }
+    return count == 5;
 }
 
-void divePart2()
+bool hasWinBoard(const int num, board &b)
 {
-  std::ifstream myfile(DAY2_PATH);
-  if (!myfile.is_open())
-  {
-    std::cout << "Error, no file founded" << std::endl;
-    return;
-  }
-
-  std::vector<Instruction> commands;
-  std::string line;
-  std::regex expr("(\\w+) (\\d+)");
-  std::smatch sm;
-
-  while (getline(myfile, line))
-  {
-    if (std::regex_search(line, sm, expr))
+    for (int i = 0; i < boardSize; ++i)
     {
-      Instruction inst(sm[1], sm[2]);
-      commands.push_back(inst);
+        for (int j = 0; j < boardSize; ++j)
+        {
+            if (b.value[i][j] == num)
+            {
+                b.value[i][j] = -1;
+                return checkHasLine(b, i, j);
+            }
+        }
     }
-  }
-  if (commands.empty())
-  {
-    std::cout << "Error, no seats at file" << std::endl;
-  }
+    return false;
+}
 
-  int horizontal = 0;
-  int depth = 0;
-  int aim = 0;
-  for (auto& cmd : commands)
-  {
-    if (cmd.type == "forward")
+int sumNoFoundNumbers(const board &b)
+{
+    int result = 0;
+    for (int i = 0; i < boardSize; ++i)
     {
-      horizontal += cmd.value;
-      depth += aim * cmd.value;
+        for (int j = 0; j < boardSize; ++j)
+        {
+            if (b.value[i][j] != -1)
+                result += b.value[i][j];
+        }
     }
-    else if (cmd.type == "down")
-      aim += cmd.value;
-    else if (cmd.type == "up")
-      aim -= cmd.value;
-  }
-  long result = horizontal * depth;
+    return result;
+}
 
-  printf("The solution for part 2 is: %i \n", result);
+void giantSquidPart1()
+{
+    std::string resourcePath = getResourcePath(2021, 4);
+    // Open numbers file
+    std::ifstream myfile(resourcePath);
+    if (!myfile.is_open())
+    {
+        std::cout << "Error, no file founded" << std::endl;
+        return;
+    }
+
+    std::vector<int> bingoNumbers;
+    std::vector<board> bingoBoards;
+    std::string line;
+    bool firstLine = true;
+    board newBoard;
+    int boardLine = 0;
+    while (getline(myfile, line))
+    { // read data from file object and put it into string.
+        if (firstLine)
+        {
+            std::stringstream ssRange(line);
+            std::string number;
+            while (getline(ssRange, number, ','))
+            {
+                bingoNumbers.push_back(std::stoi(number));
+            }
+            firstLine = false;
+            continue;
+        }
+
+        std::regex expr("\\s*(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)");
+        std::smatch sm;
+        if (std::regex_search(line, sm, expr))
+        {
+            newBoard.value[boardLine][0] = std::stoi(sm[1]);
+            newBoard.value[boardLine][1] = std::stoi(sm[2]);
+            newBoard.value[boardLine][2] = std::stoi(sm[3]);
+            newBoard.value[boardLine][3] = std::stoi(sm[4]);
+            newBoard.value[boardLine][4] = std::stoi(sm[5]);
+            ++boardLine;
+        }
+
+        if (boardLine == 5)
+        {
+            boardLine = 0;
+            bingoBoards.push_back(newBoard);
+        }
+    }
+    if (bingoBoards.empty())
+    {
+        std::cout << "Error, no binary numbers at file" << std::endl;
+    }
+
+    // Part 1:
+
+    for (auto &num : bingoNumbers)
+    {
+        for (auto &board : bingoBoards)
+        {
+            if (hasWinBoard(num, board))
+            {
+                int boardNumber = sumNoFoundNumbers(board);
+                long result = boardNumber * num;
+                printf("The solution for part 1 is: %i \n", result);
+                return;
+            }
+        }
+    }
+}
+
+void giantSquidPart2()
+{
+    std::string resourcePath = getResourcePath(2021, 4);
+    // Open numbers file
+    std::ifstream myfile(resourcePath);
+    if (!myfile.is_open())
+    {
+        std::cout << "Error, no file founded" << std::endl;
+        return;
+    }
+
+    std::vector<int> bingoNumbers;
+    std::vector<board> bingoBoards;
+    std::string line;
+    bool firstLine = true;
+    board newBoard;
+    int boardLine = 0;
+    while (getline(myfile, line))
+    { // read data from file object and put it into string.
+        if (firstLine)
+        {
+            std::stringstream ssRange(line);
+            std::string number;
+            while (getline(ssRange, number, ','))
+            {
+                bingoNumbers.push_back(std::stoi(number));
+            }
+            firstLine = false;
+            continue;
+        }
+
+        std::regex expr("\\s*(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)");
+        std::smatch sm;
+        if (std::regex_search(line, sm, expr))
+        {
+            newBoard.value[boardLine][0] = std::stoi(sm[1]);
+            newBoard.value[boardLine][1] = std::stoi(sm[2]);
+            newBoard.value[boardLine][2] = std::stoi(sm[3]);
+            newBoard.value[boardLine][3] = std::stoi(sm[4]);
+            newBoard.value[boardLine][4] = std::stoi(sm[5]);
+            ++boardLine;
+        }
+
+        if (boardLine == 5)
+        {
+            boardLine = 0;
+            bingoBoards.push_back(newBoard);
+        }
+    }
+    if (bingoBoards.empty())
+    {
+        std::cout << "Error, no binary numbers at file" << std::endl;
+    }
+
+    // Part 1:
+
+    for (auto &num : bingoNumbers)
+    {
+        for (int i = 0; i < bingoBoards.size(); ++i)
+        {
+            if (hasWinBoard(num, bingoBoards[i]))
+            {
+                if (bingoBoards.size() == 1)
+                {
+                    int boardNumber = sumNoFoundNumbers(bingoBoards.front());
+                    long result = boardNumber * num;
+                    printf("The solution for part 2 is: %i \n", result);
+                    return;
+                }
+                bingoBoards.erase(bingoBoards.begin() + i);
+                i -= 1;
+            }
+        }
+    }
 }

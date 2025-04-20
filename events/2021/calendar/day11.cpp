@@ -1,258 +1,174 @@
-#include "sonar_sweep.h"
 
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <map>
+#include <deque>
 #include <string>
 #include <numeric>
 
-#include "resource.h"
-#include "utils.h"
+#include "resources.h"
+#include "utils_2021.h"
 
-struct digitalNumbers
+static const int numIterations = 100;
+
+typedef std::pair<int, int> coord;
+
+struct Grid
 {
-  digitalNumbers(std::string s)
-  {
-    std::vector<std::string> splitedSystem;
-    splitString(s, '|', splitedSystem);
-    
-    splitString(splitedSystem.front(), ' ', numbersSystem);
-    splitString(splitedSystem.back(), ' ', selectedNumbers);
-  }
-
-  int countEasyNums()
-  {
-    int count = 0;
-    for (auto& num : selectedNumbers)
+    Grid(std::vector<std::string> strValues)
     {
-      count += (num.size() == 2) || (num.size() == 3) || (num.size() == 4) || (num.size() == 7);
-    }
-    return count;
-  }
+        sizeX = strValues[0].size();
+        sizeY = strValues.size();
 
-  std::string getOne()
-  {
-    for (auto& num : numbersSystem)
+        const int numValues = sizeX * sizeY;
+        values.reserve(numValues);
+        visited.resize(numValues, false);
+        for (auto &line : strValues)
+        {
+            for (auto &col : line)
+            {
+                values.push_back(char2int(col));
+            }
+        }
+    }
+
+    coord getXY(const int index)
     {
-      if (num.size() == 2)
-      {
-        return num;
-      }
+        return std::pair<int, int>((index % sizeX), (index / sizeX));
     }
-    return "";
-  }
 
-  std::string getSeven()
-  {
-    for (auto& num : numbersSystem)
+    int getIndex(const coord c)
     {
-      if (num.size() == 3)
-      {
-        //std::vector<char> v;
-        //auto it = std::set_difference(num.begin(), num.end(), numberMap[1].begin(), numberMap[1].end(), v.begin());
-        //charPosition[v.front()] = 0;
-        return num;
-
-      }
+        return c.first + c.second * sizeX;
     }
-    return "";
-  }
 
-  std::string getFour()
-  {
-    for (auto& num : numbersSystem)
+    bool isValidCoord(const coord c)
     {
-      if (num.size() == 4)
-        return num;
-    }
-    return "";
-  }
+        bool validX = (0 <= c.first && c.first <= sizeX - 1);
+        bool validY = (0 <= c.second && c.second <= sizeY - 1);
 
-  std::string getEight()
-  {
-    for (auto& num : numbersSystem)
+        return validX && validY;
+    }
+
+    int checkAdjacent(coord orig, coord diff)
     {
-      if (num.size() == 7)
-        return num;
-    }
-    return "";
-  }
-  
-  std::string getNine()
-  {
-    std::string join47 = numberMap[4];
-    join47.insert(join47.begin(), numberMap[7].begin(), numberMap[7].end());
-    std::sort(join47.begin(), join47.end());
-    join47.erase(std::unique(join47.begin(), join47.end()), join47.end());
+        coord aux(orig.first + diff.first, orig.second + diff.second);
+        if (!isValidCoord(aux))
+            return 0;
 
-    for (auto& num : numbersSystem)
+        const int auxIndex = getIndex(aux);
+        if (!visited[auxIndex])
+            values[auxIndex] += 1;
+
+        return updatePosition(auxIndex);
+    }
+
+    int updatePosition(const int index)
     {
-      std::string auxNum = num;
-      std::sort(auxNum.begin(), auxNum.end());
-      if (num.size() == 6)
-      {
-        std::vector<int> v(7);
-        auto it = std::set_difference(auxNum.begin(), auxNum.end(), join47.begin(), join47.end(), v.begin());
-        v.resize(it - v.begin());
-        if ( v.size() == 1)
-          return num;
-      }
-    }
-  }
+        int count = 0;
+        std::pair<int, int> xy = getXY(index);
+        const int value = values[index];
 
-  std::string getSix()
-  {
-    for (auto& num : numbersSystem)
+        if ((value > 9) && (!visited[index]))
+        {
+            visited[index] = true;
+            ++count;
+            count += checkAdjacent(xy, coord(0, -1));
+            count += checkAdjacent(xy, coord(-1, -1));
+            count += checkAdjacent(xy, coord(0, 1));
+            count += checkAdjacent(xy, coord(1, -1));
+            count += checkAdjacent(xy, coord(1, 0));
+            count += checkAdjacent(xy, coord(1, 1));
+            count += checkAdjacent(xy, coord(-1, 0));
+            count += checkAdjacent(xy, coord(-1, 1));
+            values[index] = 0;
+        }
+        return count;
+    }
+
+    int update()
     {
-      if (num.size() == 6)
-      {
-        std::string join7Num = numberMap[7];
-        join7Num.insert(join7Num.begin(), num.begin(), num.end());
-        std::sort(join7Num.begin(), join7Num.end());
-        join7Num.erase(std::unique(join7Num.begin(), join7Num.end()), join7Num.end());
-        if (join7Num == numberMap[8])
-          return num;
-      }
+        int count = 0;
+        visited.clear();
+        visited.resize(values.size(), false);
+        std::for_each(values.begin(), values.end(), [](int &v)
+                      { ++v; });
+        for (int i = 0; i < values.size(); ++i)
+        {
+            count += updatePosition(i);
+        }
+        return count;
     }
-  }
 
-  std::string getZero()
-  {
-    for (auto& num : numbersSystem)
+    bool checkIfAllReset()
     {
-      if (num.size() == 6 && (num != numberMap[6] && num != numberMap[9]))
-      {
-        return num;
-      }
+        int value = std::accumulate(values.begin(), values.end(), 0);
+        return value == 0;
     }
-  }
 
-  std::string getThree()
-  {
-    for (auto& num : numbersSystem)
+    void printGrid()
     {
-      std::string auxNum = num;
-      if (num.size() == 5)
-      {
-        std::string join1Num = numberMap[1];
-        std::vector<int> v(5);
-        auto it = std::set_difference(auxNum.begin(), auxNum.end(), join1Num.begin(), join1Num.end(), v.begin());
-        v.resize(it - v.begin());
-        if (v.size() == 3)
-          return num;
-      }
+        for (int i = 0; i < sizeX; ++i)
+        {
+            for (int j = 0; j < sizeY; ++j)
+            {
+                int index = getIndex(coord(j, i));
+                if (values[index] == 0)
+                    printf(".");
+                else
+                    printf("%d", values[index]);
+            }
+            printf("\n");
+        }
+        printf("\n");
+        printf("\n");
     }
-  }
 
-  std::string getFive()
-  {
-    for (auto& num : numbersSystem)
-    {
-      std::string auxNum = num;
-      if (num.size() == 5 )
-      {
-        std::string join8Num = numberMap[8];
-        std::vector<char> v(5);
-        auto it = std::set_intersection(numberMap[6].begin(), numberMap[6].end(), numberMap[9].begin(), numberMap[9].end(), v.begin());
-        v.resize(it - v.begin());
-        auto result = std::string(v.begin(), v.end());
-        if (result == num)
-          return num;
-      }
-    }
-  }
-
-  std::string getTwo()
-  {
-    for (auto& num : numbersSystem)
-    {
-      std::string auxNum = num;
-      if (num.size() == 5 && (num != numberMap[3] && num != numberMap[5]))
-      {
-        return num;
-      }
-    }
-  }
-
-  void translateNumbers()
-  {
-    std::for_each(numbersSystem.begin(), numbersSystem.end(), [](std::string& s) {std::sort(s.begin(), s.end()); });
-    std::for_each(selectedNumbers.begin(), selectedNumbers.end(), [](std::string& s) {std::sort(s.begin(), s.end()); });
-    numberMap[1] = getOne();
-    numberMap[7] = getSeven();
-    numberMap[4] = getFour();
-    numberMap[8] = getEight();
-    numberMap[9] = getNine();
-    numberMap[6] = getSix();
-    numberMap[0] = getZero();
-    numberMap[3] = getThree();
-    numberMap[5] = getFive();
-    numberMap[2] = getTwo();
-
-    numberMap2[numberMap[0]] = 0;
-    numberMap2[numberMap[1]] = 1;
-    numberMap2[numberMap[2]] = 2;
-    numberMap2[numberMap[3]] = 3;
-    numberMap2[numberMap[4]] = 4;
-    numberMap2[numberMap[5]] = 5;
-    numberMap2[numberMap[6]] = 6;
-    numberMap2[numberMap[7]] = 7;
-    numberMap2[numberMap[8]] = 8;
-    numberMap2[numberMap[9]] = 9;
-  }
-
-  int getResultNumber()
-  {
-    int result = 0;
-    for (int i =0; i < selectedNumbers.size(); ++i)
-    {
-      if (selectedNumbers[i] != "")
-      {
-        result += numberMap2[selectedNumbers[i]] * std::pow(10, selectedNumbers.size() - i-1);
-      }
-    }
-    return result;
-  }
-
-  std::vector<std::string> numbersSystem;
-  std::vector<std::string> selectedNumbers;
-
-  std::map<int, std::string> numberMap;
-  std::map<std::string, int> numberMap2;
-
+    int sizeX;
+    int sizeY;
+    std::vector<int> values;
+    std::vector<bool> visited;
 };
 
-void sevenSegmentSearchPart1()
+void dumboOctopusPart1()
 {
-  std::vector<digitalNumbers> allNumberSystems;
-  readDocument<digitalNumbers>(DAY8_PATH, allNumberSystems);
+    std::string resourcePath = getResourcePath(2021, 11);
+    std::vector<std::string> numsStr;
+    readDocument<std::string>(resourcePath, numsStr);
 
-  int countEasyNums=0;
-  for (auto& sys : allNumberSystems)
-  {
-    countEasyNums += sys.countEasyNums();
-  }
+    Grid grid2d(numsStr);
+    splitString(numsStr.front(), ',', numsStr);
 
-  int result = countEasyNums;
-  printf("The solution for part 1 is: %i \n", result);
+    int count = 0;
+    for (int i = 0; i < numIterations; ++i)
+    {
+        count += grid2d.update();
+        // grid2d.printGrid();
+    }
 
+    int result = count;
+    printf("The solution for part 1 is: %i \n", result);
 }
 
-void sevenSegmentSearchPart2()
+void dumboOctopusPart2()
 {
-  
-  std::vector<digitalNumbers> allNumberSystems;
-  readDocument<digitalNumbers>(DAY8_PATH, allNumberSystems);
+    std::string resourcePath = getResourcePath(2021, 11);
+    std::vector<std::string> numsStr;
+    readDocument<std::string>(resourcePath, numsStr);
 
-  long long value = 0;
-  for (auto& sys : allNumberSystems)
-  {
-    sys.translateNumbers();
-    value += sys.getResultNumber();
-  }
+    Grid grid2d(numsStr);
+    splitString(numsStr.front(), ',', numsStr);
 
+    bool allFlashes = false;
+    int index = 0;
+    while (!allFlashes)
+    {
+        grid2d.update();
+        allFlashes = grid2d.checkIfAllReset();
+        grid2d.printGrid();
+        ++index;
+    }
 
-  long long result = value;
-  printf("The solution for part 2 is: %lld \n", result);
+    int result = index;
+    printf("The solution for part 2 is: %lld \n", result);
 }

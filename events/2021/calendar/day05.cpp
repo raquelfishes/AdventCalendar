@@ -1,175 +1,177 @@
-#include "sonar_sweep.h"
 
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <deque>
 #include <string>
-#include <numeric>
+#include <regex>
 
-#include "resource.h"
-#include "utils.h"
+#include "resources.h"
+#include "utils_2021.h"
 
-static const int numIterations = 100;
-
-typedef std::pair<int, int> coord;
-
-struct Grid
+struct Line
 {
-  Grid(std::vector<std::string> strValues)
-  {
-    sizeX = strValues[0].size();
-    sizeY = strValues.size();
-
-    const int numValues = sizeX * sizeY;
-    values.reserve(numValues);
-    visited.resize(numValues, false);
-    for (auto& line : strValues)
+    Line(int x1, int y1, int x2, int y2) : x1(x1), y1(y1), x2(x2), y2(y2)
     {
-      for(auto & col : line)
-      {
-        values.push_back(char2int(col));
-      }
-    }
-  }
+        lineVector = std::pair<int, int>(x2 - x1, y2 - y1);
+    };
 
-  coord getXY(const int index)
-  {
-    return std::pair<int,int>((index%sizeX), (index/sizeX));
-  }
-
-  int getIndex(const coord c)
-  {
-    return c.first + c.second * sizeX;
-  }
-
-  bool isValidCoord(const coord c)
-  {
-    bool validX = (0 <= c.first && c.first <= sizeX - 1);
-    bool validY = (0 <= c.second && c.second <= sizeY - 1);
-
-    return validX && validY;
-  }
-
-  int checkAdjacent(coord orig, coord diff)
-  {
-    coord aux(orig.first + diff.first, orig.second + diff.second);
-    if (!isValidCoord(aux))
-      return 0;
-
-    const int auxIndex = getIndex(aux);
-    if (!visited[auxIndex])
-      values[auxIndex] += 1;
-
-    return updatePosition(auxIndex);
-  }
-
-  int updatePosition(const int index)
-  {
-    int count = 0;
-    std::pair<int, int> xy = getXY(index);
-    const int value = values[index];
-
-    if ((value > 9) && (!visited[index]))
+    Line(std::string s)
     {
-      visited[index] = true;
-      ++count;
-      count += checkAdjacent(xy, coord(0, -1));
-      count += checkAdjacent(xy, coord(-1, -1));
-      count += checkAdjacent(xy, coord(0, 1));
-      count += checkAdjacent(xy, coord(1, -1));
-      count += checkAdjacent(xy, coord(1, 0));
-      count += checkAdjacent(xy, coord(1, 1));
-      count += checkAdjacent(xy, coord(-1, 0));
-      count += checkAdjacent(xy, coord(-1, 1));
-      values[index] = 0;
-    }
-    return count;
-  }
+        std::vector<std::string> values;
+        std::regex exp("(\\d+),(\\d+) -> (\\d+),(\\d+)");
+        splitByRegex(s, exp, values);
+        x1 = std::stoi(values[1]);
+        y1 = std::stoi(values[2]);
+        x2 = std::stoi(values[3]);
+        y2 = std::stoi(values[4]);
 
-  int update()
-  {
-    int count = 0;
-    visited.clear(); visited.resize(values.size(), false);
-    std::for_each(values.begin(), values.end(), [](int& v) {++v;});
-    for (int i = 0; i < values.size(); ++i)
+        lineVector = std::pair<int, int>(x2 - x1, y2 - y1);
+        lineVector.first /= lineVector.first != 0 ? std::abs(lineVector.first) : 1;
+        lineVector.second /= lineVector.second != 0 ? std::abs(lineVector.second) : 1;
+    }
+
+    bool isStraight()
     {
-      count += updatePosition(i);
+        return x1 == x2 || y1 == y2;
     }
-    return count;
-  }
 
-  bool checkIfAllReset()
-  {
-    int value = std::accumulate(values.begin(), values.end(), 0);
-    return value == 0;
-  }
-
-  void printGrid()
-  {
-    for (int i = 0; i < sizeX; ++i)
+    bool isDiagonal()
     {
-      for (int j = 0; j < sizeY; ++j)
-      {
-        int index = getIndex(coord(j, i));
-        if (values[index] == 0)
-          printf(".");
-        else
-          printf("%d", values[index]);
-      }
-      printf("\n");
+        return std::abs(lineVector.first) && std::abs(lineVector.second);
     }
-    printf("\n");
-    printf("\n");
-  }
 
+    int x1;
+    int y1;
+    int x2;
+    int y2;
 
-  int sizeX;
-  int sizeY;
-  std::vector<int> values;
-  std::vector<bool> visited;
+    std::pair<int, int> lineVector;
 };
 
-void dumboOctopusPart1()
+struct BBox
 {
-  std::vector<std::string> numsStr;
-  readDocument<std::string>(DAY11_PATH, numsStr);
+    int minX = std::numeric_limits<int>::max();
+    int minY = std::numeric_limits<int>::max();
 
-  Grid grid2d(numsStr);
-  splitString(numsStr.front(), ',', numsStr);
+    int maxX = std::numeric_limits<int>::min();
+    int maxY = std::numeric_limits<int>::min();
+};
 
-  int count = 0;
-  for (int i = 0; i < numIterations; ++i)
-  {
-    count += grid2d.update();
-    //grid2d.printGrid();
-  }
-
-  int result = count;
-  printf("The solution for part 1 is: %i \n", result);
-
+int compute2dPosition(const int x, const int y, const int sizeX, const int sizeY)
+{
+    return x + y * sizeX;
 }
 
-void dumboOctopusPart2()
+void markAsVisited(const Line &line, std::vector<int> &grid2d, const int sizeX, const int sizeY)
 {
-  std::vector<std::string> numsStr;
-  readDocument<std::string>(DAY11_PATH, numsStr);
+    std::pair<int, int> aux = line.lineVector;
 
-  Grid grid2d(numsStr);
-  splitString(numsStr.front(), ',', numsStr);
+    std::pair<int, int> currentPoint(line.x1, line.y1);
+    std::pair<int, int> endPoint(line.x2, line.y2);
 
-  bool allFlashes = false;
-  int index = 0;
-  while (!allFlashes)
-  {
-    grid2d.update();
-    allFlashes = grid2d.checkIfAllReset();
-    grid2d.printGrid();
-    ++index;
+    do
+    {
+        int d_position = compute2dPosition(currentPoint.first, currentPoint.second, sizeX, sizeY);
+        grid2d[d_position] += 1;
+        currentPoint.first += line.lineVector.first;
+        currentPoint.second += line.lineVector.second;
+    } while (currentPoint != endPoint);
 
-  }
+    // Add last point
+    int d_position = compute2dPosition(currentPoint.first, currentPoint.second, sizeX, sizeY);
+    grid2d[d_position] += 1;
+}
 
-  
-  int result = index;
-  printf("The solution for part 2 is: %lld \n", result);
+void printGrid(const std::vector<int> &grid, const int sizeX, const int sizeY)
+{
+    for (int i = 0; i < sizeX; ++i)
+    {
+        for (int j = 0; j < sizeY; ++j)
+        {
+            int index = compute2dPosition(j, i, sizeX, sizeY);
+            if (grid[index] == 0)
+                printf(".");
+            else
+                printf("%d", grid[index]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+    printf("\n");
+}
+
+void hydrothermalVenturePart1()
+{
+    std::string resourcePath = getResourcePath(2021, 5);
+    std::vector<Line> lines;
+    readDocument<Line>(resourcePath, lines);
+
+    // Compute de limits of 2D grid
+    BBox bbox;
+    for (auto &line : lines)
+    {
+        bbox.minX = std::min(bbox.minX, std::min(line.x1, line.x2));
+        bbox.minY = std::min(bbox.minY, std::min(line.y1, line.y2));
+
+        bbox.maxX = std::max(bbox.maxX, std::max(line.x1, line.x2));
+        bbox.maxY = std::max(bbox.maxY, std::max(line.y1, line.y2));
+    }
+
+    int length = bbox.maxX + 1; // std::abs(bbox.maxX - bbox.minX)+1;
+    int height = bbox.maxY + 1; // std::abs(bbox.maxY - bbox.minY)+1;
+    int size = length * height;
+
+    std::vector<int> grid2d(size, 0);
+
+    // Fill 2D with lines
+    for (auto &line : lines)
+    {
+        if (line.isStraight())
+            markAsVisited(line, grid2d, length, height);
+        // printGrid(grid2d, length, height);
+    }
+
+    int result = 0;
+    std::for_each(grid2d.begin(), grid2d.end(), [&result](int &n)
+                  { result += (n > 1); });
+
+    printf("The solution for part 1 is: %i \n", result);
+}
+
+void hydrothermalVenturePart2()
+{
+    std::string resourcePath = getResourcePath(2021, 5);
+    std::vector<Line> lines;
+    readDocument<Line>(resourcePath, lines);
+
+    // Compute de limits of 2D grid
+    BBox bbox;
+    for (auto &line : lines)
+    {
+        bbox.minX = std::min(bbox.minX, std::min(line.x1, line.x2));
+        bbox.minY = std::min(bbox.minY, std::min(line.y1, line.y2));
+
+        bbox.maxX = std::max(bbox.maxX, std::max(line.x1, line.x2));
+        bbox.maxY = std::max(bbox.maxY, std::max(line.y1, line.y2));
+    }
+
+    int length = bbox.maxX + 1; // std::abs(bbox.maxX - bbox.minX)+1;
+    int height = bbox.maxY + 1; // std::abs(bbox.maxY - bbox.minY)+1;
+    int size = length * height;
+
+    std::vector<int> grid2d(size, 0);
+
+    // Fill 2D with lines
+    for (auto &line : lines)
+    {
+        if (line.isStraight() || line.isDiagonal())
+            markAsVisited(line, grid2d, length, height);
+        // printGrid(grid2d, length, height);
+    }
+
+    int result = 0;
+    std::for_each(grid2d.begin(), grid2d.end(), [&result](int &n)
+                  { result += (n > 1); });
+
+    printf("The solution for part 2 is: %i \n", result);
 }

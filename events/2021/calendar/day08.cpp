@@ -1,178 +1,256 @@
-#include "sonar_sweep.h"
 
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <map>
 #include <string>
-#include <regex>
+#include <numeric>
 
-#include "resource.h"
-#include "utils.h"
+#include "resources.h"
+#include "utils_2021.h"
 
-
-struct Line
+struct digitalNumbers
 {
-  Line(int x1, int y1, int x2, int y2) :
-    x1(x1), y1(y1), x2(x2), y2(y2)
-  { 
-    lineVector = std::pair<int, int>(x2 - x1, y2 - y1);
-  };
-
-  Line(std::string s)
-  {
-    std::vector<std::string> values;
-    std::regex exp("(\\d+),(\\d+) -> (\\d+),(\\d+)");
-    splitByRegex(s, exp, values);
-    x1 = std::stoi(values[1]);
-    y1 = std::stoi(values[2]);
-    x2 = std::stoi(values[3]);
-    y2 = std::stoi(values[4]);
-
-    lineVector = std::pair<int, int>(x2 - x1, y2 - y1);
-    lineVector.first /= lineVector.first != 0 ? std::abs(lineVector.first) : 1;
-    lineVector.second /= lineVector.second != 0 ? std::abs(lineVector.second) : 1;
-  }
-
-  bool isStraight()
-  {
-    return x1 == x2 || y1 == y2;
-  }
-
-  bool isDiagonal()
-  {
-    return std::abs(lineVector.first) && std::abs(lineVector.second);
-  }
-
-  int x1;
-  int y1;
-  int x2;
-  int y2;
-
-  std::pair<int, int> lineVector;
-};
-
-struct BBox
-{
-  int minX = std::numeric_limits<int>::max();
-  int minY = std::numeric_limits<int>::max();
-
-  int maxX = std::numeric_limits<int>::min();
-  int maxY = std::numeric_limits<int>::min();
-};
-
-int compute2dPosition(const int x, const int y, const int sizeX, const int sizeY)
-{
-  return x + y * sizeX;
-}
-
-void markAsVisited(const Line& line, std::vector<int>& grid2d, const int sizeX, const int sizeY)
-{
-  std::pair<int, int> aux = line.lineVector;
-  
-  std::pair<int, int> currentPoint(line.x1, line.y1);
-  std::pair<int, int> endPoint(line.x2, line.y2);
-  
-  do
-  {
-    int d_position = compute2dPosition(currentPoint.first, currentPoint.second, sizeX, sizeY);
-    grid2d[d_position] += 1;
-    currentPoint.first += line.lineVector.first;
-    currentPoint.second += line.lineVector.second;
-  } while (currentPoint != endPoint);
-
-  // Add last point
-  int d_position = compute2dPosition(currentPoint.first, currentPoint.second, sizeX, sizeY);
-  grid2d[d_position] += 1;
-}
-
-void printGrid(const std::vector<int>& grid, const int sizeX, const int sizeY)
-{
-  for (int i = 0; i < sizeX; ++i)
-  {
-    for (int j = 0; j < sizeY; ++j)
+    digitalNumbers(std::string s)
     {
-      int index = compute2dPosition(j, i, sizeX, sizeY);
-      if (grid[index] == 0)
-        printf(".");
-      else
-        printf("%d", grid[index]);
+        std::vector<std::string> splitedSystem;
+        splitString(s, '|', splitedSystem);
+
+        splitString(splitedSystem.front(), ' ', numbersSystem);
+        splitString(splitedSystem.back(), ' ', selectedNumbers);
     }
-    printf("\n");
-  }
-  printf("\n");
-  printf("\n");
+
+    int countEasyNums()
+    {
+        int count = 0;
+        for (auto &num : selectedNumbers)
+        {
+            count += (num.size() == 2) || (num.size() == 3) || (num.size() == 4) || (num.size() == 7);
+        }
+        return count;
+    }
+
+    std::string getOne()
+    {
+        for (auto &num : numbersSystem)
+        {
+            if (num.size() == 2)
+            {
+                return num;
+            }
+        }
+        return "";
+    }
+
+    std::string getSeven()
+    {
+        for (auto &num : numbersSystem)
+        {
+            if (num.size() == 3)
+            {
+                // std::vector<char> v;
+                // auto it = std::set_difference(num.begin(), num.end(), numberMap[1].begin(), numberMap[1].end(), v.begin());
+                // charPosition[v.front()] = 0;
+                return num;
+            }
+        }
+        return "";
+    }
+
+    std::string getFour()
+    {
+        for (auto &num : numbersSystem)
+        {
+            if (num.size() == 4)
+                return num;
+        }
+        return "";
+    }
+
+    std::string getEight()
+    {
+        for (auto &num : numbersSystem)
+        {
+            if (num.size() == 7)
+                return num;
+        }
+        return "";
+    }
+
+    std::string getNine()
+    {
+        std::string join47 = numberMap[4];
+        join47.insert(join47.begin(), numberMap[7].begin(), numberMap[7].end());
+        std::sort(join47.begin(), join47.end());
+        join47.erase(std::unique(join47.begin(), join47.end()), join47.end());
+
+        for (auto &num : numbersSystem)
+        {
+            std::string auxNum = num;
+            std::sort(auxNum.begin(), auxNum.end());
+            if (num.size() == 6)
+            {
+                std::vector<int> v(7);
+                auto it = std::set_difference(auxNum.begin(), auxNum.end(), join47.begin(), join47.end(), v.begin());
+                v.resize(it - v.begin());
+                if (v.size() == 1)
+                    return num;
+            }
+        }
+    }
+
+    std::string getSix()
+    {
+        for (auto &num : numbersSystem)
+        {
+            if (num.size() == 6)
+            {
+                std::string join7Num = numberMap[7];
+                join7Num.insert(join7Num.begin(), num.begin(), num.end());
+                std::sort(join7Num.begin(), join7Num.end());
+                join7Num.erase(std::unique(join7Num.begin(), join7Num.end()), join7Num.end());
+                if (join7Num == numberMap[8])
+                    return num;
+            }
+        }
+    }
+
+    std::string getZero()
+    {
+        for (auto &num : numbersSystem)
+        {
+            if (num.size() == 6 && (num != numberMap[6] && num != numberMap[9]))
+            {
+                return num;
+            }
+        }
+    }
+
+    std::string getThree()
+    {
+        for (auto &num : numbersSystem)
+        {
+            std::string auxNum = num;
+            if (num.size() == 5)
+            {
+                std::string join1Num = numberMap[1];
+                std::vector<int> v(5);
+                auto it = std::set_difference(auxNum.begin(), auxNum.end(), join1Num.begin(), join1Num.end(), v.begin());
+                v.resize(it - v.begin());
+                if (v.size() == 3)
+                    return num;
+            }
+        }
+    }
+
+    std::string getFive()
+    {
+        for (auto &num : numbersSystem)
+        {
+            std::string auxNum = num;
+            if (num.size() == 5)
+            {
+                std::string join8Num = numberMap[8];
+                std::vector<char> v(5);
+                auto it = std::set_intersection(numberMap[6].begin(), numberMap[6].end(), numberMap[9].begin(), numberMap[9].end(), v.begin());
+                v.resize(it - v.begin());
+                auto result = std::string(v.begin(), v.end());
+                if (result == num)
+                    return num;
+            }
+        }
+    }
+
+    std::string getTwo()
+    {
+        for (auto &num : numbersSystem)
+        {
+            std::string auxNum = num;
+            if (num.size() == 5 && (num != numberMap[3] && num != numberMap[5]))
+            {
+                return num;
+            }
+        }
+    }
+
+    void translateNumbers()
+    {
+        std::for_each(numbersSystem.begin(), numbersSystem.end(), [](std::string &s)
+                      { std::sort(s.begin(), s.end()); });
+        std::for_each(selectedNumbers.begin(), selectedNumbers.end(), [](std::string &s)
+                      { std::sort(s.begin(), s.end()); });
+        numberMap[1] = getOne();
+        numberMap[7] = getSeven();
+        numberMap[4] = getFour();
+        numberMap[8] = getEight();
+        numberMap[9] = getNine();
+        numberMap[6] = getSix();
+        numberMap[0] = getZero();
+        numberMap[3] = getThree();
+        numberMap[5] = getFive();
+        numberMap[2] = getTwo();
+
+        numberMap2[numberMap[0]] = 0;
+        numberMap2[numberMap[1]] = 1;
+        numberMap2[numberMap[2]] = 2;
+        numberMap2[numberMap[3]] = 3;
+        numberMap2[numberMap[4]] = 4;
+        numberMap2[numberMap[5]] = 5;
+        numberMap2[numberMap[6]] = 6;
+        numberMap2[numberMap[7]] = 7;
+        numberMap2[numberMap[8]] = 8;
+        numberMap2[numberMap[9]] = 9;
+    }
+
+    int getResultNumber()
+    {
+        int result = 0;
+        for (int i = 0; i < selectedNumbers.size(); ++i)
+        {
+            if (selectedNumbers[i] != "")
+            {
+                result += numberMap2[selectedNumbers[i]] * std::pow(10, selectedNumbers.size() - i - 1);
+            }
+        }
+        return result;
+    }
+
+    std::vector<std::string> numbersSystem;
+    std::vector<std::string> selectedNumbers;
+
+    std::map<int, std::string> numberMap;
+    std::map<std::string, int> numberMap2;
+};
+
+void sevenSegmentSearchPart1()
+{
+    std::string resourcePath = getResourcePath(2021, 8);
+    std::vector<digitalNumbers> allNumberSystems;
+    readDocument<digitalNumbers>(resourcePath, allNumberSystems);
+
+    int countEasyNums = 0;
+    for (auto &sys : allNumberSystems)
+    {
+        countEasyNums += sys.countEasyNums();
+    }
+
+    int result = countEasyNums;
+    printf("The solution for part 1 is: %i \n", result);
 }
 
-void hydrothermalVenturePart1()
+void sevenSegmentSearchPart2()
 {
-  std::vector<Line> lines;
-  readDocument<Line>(DAY5_PATH, lines);
+    std::string resourcePath = getResourcePath(2021, 8);
+    std::vector<digitalNumbers> allNumberSystems;
+    readDocument<digitalNumbers>(resourcePath, allNumberSystems);
 
-  // Compute de limits of 2D grid
-  BBox bbox;
-  for ( auto& line : lines)
-  {
-    bbox.minX = std::min(bbox.minX, std::min(line.x1, line.x2));
-    bbox.minY = std::min(bbox.minY, std::min(line.y1, line.y2));
+    long long value = 0;
+    for (auto &sys : allNumberSystems)
+    {
+        sys.translateNumbers();
+        value += sys.getResultNumber();
+    }
 
-    bbox.maxX = std::max(bbox.maxX, std::max(line.x1, line.x2));
-    bbox.maxY = std::max(bbox.maxY, std::max(line.y1, line.y2));
-  }
-
-  int length = bbox.maxX+1;//std::abs(bbox.maxX - bbox.minX)+1;
-  int height = bbox.maxY+1;//std::abs(bbox.maxY - bbox.minY)+1;
-  int size = length * height;
-
-  std::vector<int> grid2d(size, 0);
-
-  // Fill 2D with lines
-  for (auto& line : lines)
-  {
-    if ( line.isStraight())
-      markAsVisited(line, grid2d, length, height);
-    //printGrid(grid2d, length, height);
-  }
-
-  int result = 0;
-  std::for_each(grid2d.begin(), grid2d.end(), [&result](int& n) { result += (n>1); });
-  
-
-  printf("The solution for part 1 is: %i \n", result);
-
-}
-
-void hydrothermalVenturePart2()
-{
-  std::vector<Line> lines;
-  readDocument<Line>(DAY5_PATH, lines);
-
-  // Compute de limits of 2D grid
-  BBox bbox;
-  for (auto& line : lines)
-  {
-    bbox.minX = std::min(bbox.minX, std::min(line.x1, line.x2));
-    bbox.minY = std::min(bbox.minY, std::min(line.y1, line.y2));
-
-    bbox.maxX = std::max(bbox.maxX, std::max(line.x1, line.x2));
-    bbox.maxY = std::max(bbox.maxY, std::max(line.y1, line.y2));
-  }
-
-  int length = bbox.maxX+1;//std::abs(bbox.maxX - bbox.minX)+1;
-  int height = bbox.maxY+1;//std::abs(bbox.maxY - bbox.minY)+1;
-  int size = length * height;
-
-  std::vector<int> grid2d(size, 0);
-
-  // Fill 2D with lines
-  for (auto& line : lines)
-  {
-    if (line.isStraight() || line.isDiagonal())
-      markAsVisited(line, grid2d, length, height);
-    //printGrid(grid2d, length, height);
-  }
-
-  int result = 0;
-  std::for_each(grid2d.begin(), grid2d.end(), [&result](int& n) { result += (n > 1); });
-
-  printf("The solution for part 2 is: %i \n", result);
+    long long result = value;
+    printf("The solution for part 2 is: %lld \n", result);
 }

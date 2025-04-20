@@ -4,7 +4,11 @@
     "cmake.generator": "Ninja", // Más rápido que "Unix Makefiles"
     "files.associations": {
         "*.cpp": "cpp",
-        "*.h": "cpp"
+        "*.h": "cpp",
+        "chrono": "cpp",
+        "iostream": "cpp",
+        "*.in": "cpp",
+        "deque": "cpp"
     },
     "editor.formatOnSave": true, // Opcional: formatea el código automáticamente al guardar
     "cmake.buildBeforeRun": true, // Opcional: compila automáticamente antes de ejecutar

@@ -1,189 +1,193 @@
-#include "sonar_sweep.h"
 
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <deque>
+#include <map>
+#include <set>
 #include <string>
 #include <numeric>
+#include <memory>
 
-#include "resource.h"
-#include "utils.h"
+#include "resources.h"
+#include "utils_2021.h"
 
+#define STARTNODE "start"
+#define ENDNODE "end"
 
-typedef std::pair<int, int> coord;
-
-struct Grid
+struct Edge
 {
-  Grid(std::vector<std::string> strValues)
-  {
-    sizeX = strValues[0].size();
-    sizeY = strValues.size();
-
-    const int numValues = sizeX * sizeY;
-    values.reserve(numValues);
-    for (auto& line : strValues)
+    Edge(std::string s)
     {
-      for(auto & col : line)
-      {
-        values.push_back(char2int(col));
-      }
+        std::vector<std::string> splited;
+        splitString(s, '-', splited);
+        n1 = splited[0];
+        n2 = splited[1];
     }
-  }
-
-  coord getXY(const int index)
-  {
-    return std::pair<int,int>((index%sizeX), (index/sizeX));
-  }
-
-  int getIndex(const coord c)
-  {
-    return c.first + c.second * sizeX;
-  }
-
-  bool isValidCoord(const coord c)
-  {
-    bool validX = (0 <= c.first && c.first <= sizeX - 1);
-    bool validY = (0 <= c.second && c.second <= sizeY - 1);
-
-    return validX && validY;
-  }
-
-  bool isHighThanValue(const coord c, const int value)
-  {
-    return values[getIndex(c)] > value;
-  }
-
-  bool checkAdjacentLess(const coord& orig, const int& origVal, const coord diff)
-  {
-    coord aux(orig.first + diff.first, orig.second + diff.second);
-    if (isValidCoord(aux))
-    {
-      if (isHighThanValue(aux, origVal))
-      {
-        return true;
-      }
-      return false;
-    }
-    return true;
-  }
-
-  bool checkPosition(const int index)
-  {
-    std::pair<int, int> xy = getXY(index);
-    const int value = values[index];
-    bool up    = checkAdjacentLess(xy, value, coord(0,-1));
-    bool down  = checkAdjacentLess(xy, value, coord(0,1));
-    bool right = checkAdjacentLess(xy, value, coord(1,0));
-    bool left  = checkAdjacentLess(xy, value, coord(-1,0));
-
-    return up && down && right && left;
-  }
-
-  int getRiskyLevel(const int index)
-  {
-    return values[index] + 1;
-  }
-
-  bool checkAdjacentBasin(const coord& orig, const int& origVal, const coord diff)
-  {
-    coord aux(orig.first + diff.first, orig.second + diff.second);
-    if (isValidCoord(aux))
-    {
-      if (isHighThanValue(aux, origVal))
-      {
-        return true;
-      }
-      return false;
-    }
-    return true;
-  }
-
-  int computeSizeBasin(const int index)
-  {
-    int size = 0;
-    if (values[index] == 9) return 0;
-    if (visited[index]) return 0;
-
-    std::pair<int, int> xy = getXY(index);
-    // Add current grid position to size and remove for avoid infinite loops
-    ++size;
-    visited[index] = true;
-
-    coord up(xy.first + 0, xy.second - 1);
-    coord down(xy.first + 0, xy.second + 1);
-    coord left(xy.first - 1, xy.second + 0);
-    coord right(xy.first + 1, xy.second + 0);
-    if (isValidCoord(up))
-    {
-      size += computeSizeBasin(getIndex(up));
-    }
-    if (isValidCoord(down))
-    {
-      size += computeSizeBasin(getIndex(down));
-    }
-    if (isValidCoord(left))
-    {
-      size += computeSizeBasin(getIndex(left));
-    }
-    if (isValidCoord(right))
-    {
-      size += computeSizeBasin(getIndex(right));
-    }
-
-    return size;
-  }
-
-
-  int sizeX;
-  int sizeY;
-  std::vector<int> values;
-  std::vector<bool> visited;
+    std::string n1;
+    std::string n2;
 };
 
-void smokeBasinPart1()
+struct Node
 {
-  std::vector<std::string> numsStr;
-  readDocument<std::string>(DAY9_PATH, numsStr);
+    Node(std::string name, int visited)
+        : name(name), visited(visited)
+    {
+    }
 
-  Grid grid2d(numsStr);
-  splitString(numsStr.front(), ',', numsStr);
+    bool isUpper()
+    {
+        return isUppercase(name);
+    }
 
-  int count = 0;
-  for (int i = 0; i < grid2d.values.size(); ++i)
-  {
-    bool isLowPoint = grid2d.checkPosition(i);
-    if (isLowPoint)
-      count += grid2d.getRiskyLevel(i);
-  }
+    std::string name;
+    std::set<std::string> connections;
+    int visited;
+};
 
-  int result = count;
-  printf("The solution for part 1 is: %i \n", result);
+struct Graph
+{
+    Graph() {};
 
+    void addNode(const std::string &n)
+    {
+        if (nodes.count(n) == 0)
+        {
+            // This node name doesnt exist in the graph
+            auto nptr = std::make_shared<Node>(n, false);
+            std::pair<std::string, std::shared_ptr<Node>> nodePair(n, nptr);
+            nodes.insert(nodePair);
+        }
+    }
+
+    void addEdge(const Edge &e)
+    {
+        // Add nodes to graph
+        addNode(e.n1);
+        addNode(e.n2);
+        // Add connections betwenn them
+        nodes[e.n1]->connections.insert(e.n2);
+        nodes[e.n2]->connections.insert(e.n1);
+    }
+
+    int visitNode(const std::string s)
+    {
+        int count = 0;
+        if (s == ENDNODE)
+        {
+            return 1;
+        }
+
+        if (!nodes[s]->isUpper() && nodes[s]->visited)
+        {
+            return 0;
+        }
+
+        nodes[s]->visited = true;
+
+        for (auto &n : nodes[s]->connections)
+        {
+            count += visitNode(n);
+        }
+        nodes[s]->visited = false;
+        return count;
+    }
+
+    bool checkIfDoubleVisited()
+    {
+        for (auto &node : nodes)
+        {
+            if (!node.second->isUpper())
+            {
+                if (node.second->visited > 1)
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    bool availableToVisit(const std::string s)
+    {
+        if (s == STARTNODE && nodes[s]->visited)
+            return false;
+
+        bool isLowerNode = (!nodes[s]->isUpper() && nodes[s]->visited);
+        if (!nodes[s]->isUpper())
+        {
+            if (nodes[s]->visited == 0)
+                return true;
+            else if (nodes[s]->visited == 2)
+                return false;
+            else if (checkIfDoubleVisited())
+                return false;
+        }
+
+        return true;
+    }
+
+    int visitNode2(const std::string s)
+    {
+        int count = 0;
+        if (s == ENDNODE)
+        {
+            // printf("%s \n", ENDNODE);
+            return 1;
+        }
+
+        if (!availableToVisit(s))
+        {
+            // printf("ERRROORRRRRRRR\n");
+            return 0;
+        }
+
+        bool isSecondTime = (!nodes[s]->isUpper() && nodes[s]->visited);
+
+        ++nodes[s]->visited;
+        // printf("%s,", s.c_str());
+
+        for (auto &n : nodes[s]->connections)
+        {
+            count += visitNode2(n);
+        }
+        --nodes[s]->visited;
+        return count;
+    }
+
+    std::shared_ptr<Node> root;
+    std::map<std::string, std::shared_ptr<Node>> nodes;
+};
+
+Graph buildGraph(const std::vector<Edge> edges)
+{
+    Graph g;
+    std::for_each(edges.begin(), edges.end(), [&g](Edge e)
+                  { g.addEdge(e); });
+    return g;
 }
 
-void smokeBasinPart2()
+void passagePathingPart1()
 {
- 
-  std::vector<std::string> numsStr;
-  readDocument<std::string>(DAY9_PATH, numsStr);
+    std::string resourcePath = getResourcePath(2021, 12);
+    std::vector<Edge> edges;
+    readDocument<Edge>(resourcePath, edges);
 
-  Grid grid2d(numsStr);
-  splitString(numsStr.front(), ',', numsStr);
+    int countPaths = 0;
+    Graph graph = buildGraph(edges);
+    countPaths = graph.visitNode(STARTNODE);
 
-  int count = 0;
-  std::vector<int> basins;
-  grid2d.visited.resize(grid2d.values.size(), false);
-  for (int i = 0; i < grid2d.values.size(); ++i)
-  {
-    bool isLowPoint = grid2d.checkPosition(i);
-    if (isLowPoint)
-      basins.push_back(grid2d.computeSizeBasin(i));
-  }
+    long long result = countPaths;
+    printf("The solution for part 1 is: %i \n", result);
+}
 
-  std::sort(basins.begin(), basins.end());
-  std::reverse(basins.begin(), basins.end());
+void passagePathingPart2()
+{
+    std::string resourcePath = getResourcePath(2021, 12);
+    std::vector<Edge> edges;
+    readDocument<Edge>(resourcePath, edges);
 
-  int result = basins[0]*basins[1]*basins[2];
-  printf("The solution for part 2 is: %lld \n", result);
+    int countPaths = 0;
+    Graph graph = buildGraph(edges);
+    countPaths = graph.visitNode2(STARTNODE);
+
+    long long result = countPaths;
+    printf("The solution for part 2 is: %lld \n", result);
 }

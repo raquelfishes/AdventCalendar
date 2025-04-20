@@ -1,4 +1,3 @@
-#include "sonar_sweep.h"
 
 #include <iostream>
 #include <fstream>
@@ -7,82 +6,183 @@
 #include <string>
 #include <numeric>
 
-#include "resource.h"
-#include "utils.h"
+#include "resources.h"
+#include "utils_2021.h"
 
-static const int iterationP1 = 80;
-static const int iterationP2 = 256;
-static const int valueNewFish = 8;
+typedef std::pair<int, int> coord;
 
-void lanternfishPart1()
+struct Grid
 {
-  std::vector<std::string> numsStr;
-  readDocument<std::string>(DAY6_PATH, numsStr);
-
-  splitString(numsStr.front(), ',', numsStr);
-
-  std::vector<int> numsFish;
-  std::for_each(numsStr.begin(), numsStr.end(), [&numsFish](std::string s)
+    Grid(std::vector<std::string> strValues)
     {
-      numsFish.push_back(std::stoi(s));
-    });
-  
-  // sort by value
-  std::sort(numsFish.begin(), numsFish.end());
+        sizeX = strValues[0].size();
+        sizeY = strValues.size();
 
-  for (int i = 0; i < iterationP1; ++i)
-  {
-    std::for_each(numsFish.begin(), numsFish.end(), [](int& i) {--i; });
-    if (numsFish.front() == -1)
+        const int numValues = sizeX * sizeY;
+        values.reserve(numValues);
+        for (auto &line : strValues)
+        {
+            for (auto &col : line)
+            {
+                values.push_back(char2int(col));
+            }
+        }
+    }
+
+    coord getXY(const int index)
     {
-      std::vector<int> zeroV{ -1 };
-      std::vector<int> sixV{ 6 };
-      auto result = std::find_end(numsFish.begin(), numsFish.end(), zeroV.begin(), zeroV.end())+1;
-      int numZeros = std::distance(numsFish.begin(), result);
-      numsFish.erase(numsFish.begin(), result);
-      std::fill_n(std::back_inserter(numsFish), numZeros, valueNewFish);
-      result = std::upper_bound(numsFish.begin(), numsFish.end(), sixV.front());
-      sixV.resize(numZeros, 6);
-      numsFish.insert(result, sixV.begin(), sixV.end());
-    }  
+        return std::pair<int, int>((index % sizeX), (index / sizeX));
+    }
 
-  }
+    int getIndex(const coord c)
+    {
+        return c.first + c.second * sizeX;
+    }
 
-  int result = numsFish.size();
-  printf("The solution for part 1 is: %i \n", result);
+    bool isValidCoord(const coord c)
+    {
+        bool validX = (0 <= c.first && c.first <= sizeX - 1);
+        bool validY = (0 <= c.second && c.second <= sizeY - 1);
 
+        return validX && validY;
+    }
+
+    bool isHighThanValue(const coord c, const int value)
+    {
+        return values[getIndex(c)] > value;
+    }
+
+    bool checkAdjacentLess(const coord &orig, const int &origVal, const coord diff)
+    {
+        coord aux(orig.first + diff.first, orig.second + diff.second);
+        if (isValidCoord(aux))
+        {
+            if (isHighThanValue(aux, origVal))
+            {
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
+
+    bool checkPosition(const int index)
+    {
+        std::pair<int, int> xy = getXY(index);
+        const int value = values[index];
+        bool up = checkAdjacentLess(xy, value, coord(0, -1));
+        bool down = checkAdjacentLess(xy, value, coord(0, 1));
+        bool right = checkAdjacentLess(xy, value, coord(1, 0));
+        bool left = checkAdjacentLess(xy, value, coord(-1, 0));
+
+        return up && down && right && left;
+    }
+
+    int getRiskyLevel(const int index)
+    {
+        return values[index] + 1;
+    }
+
+    bool checkAdjacentBasin(const coord &orig, const int &origVal, const coord diff)
+    {
+        coord aux(orig.first + diff.first, orig.second + diff.second);
+        if (isValidCoord(aux))
+        {
+            if (isHighThanValue(aux, origVal))
+            {
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
+
+    int computeSizeBasin(const int index)
+    {
+        int size = 0;
+        if (values[index] == 9)
+            return 0;
+        if (visited[index])
+            return 0;
+
+        std::pair<int, int> xy = getXY(index);
+        // Add current grid position to size and remove for avoid infinite loops
+        ++size;
+        visited[index] = true;
+
+        coord up(xy.first + 0, xy.second - 1);
+        coord down(xy.first + 0, xy.second + 1);
+        coord left(xy.first - 1, xy.second + 0);
+        coord right(xy.first + 1, xy.second + 0);
+        if (isValidCoord(up))
+        {
+            size += computeSizeBasin(getIndex(up));
+        }
+        if (isValidCoord(down))
+        {
+            size += computeSizeBasin(getIndex(down));
+        }
+        if (isValidCoord(left))
+        {
+            size += computeSizeBasin(getIndex(left));
+        }
+        if (isValidCoord(right))
+        {
+            size += computeSizeBasin(getIndex(right));
+        }
+
+        return size;
+    }
+
+    int sizeX;
+    int sizeY;
+    std::vector<int> values;
+    std::vector<bool> visited;
+};
+
+void smokeBasinPart1()
+{
+    std::string resourcePath = getResourcePath(2021, 9);
+    std::vector<std::string> numsStr;
+    readDocument<std::string>(resourcePath, numsStr);
+
+    Grid grid2d(numsStr);
+    splitString(numsStr.front(), ',', numsStr);
+
+    int count = 0;
+    for (int i = 0; i < grid2d.values.size(); ++i)
+    {
+        bool isLowPoint = grid2d.checkPosition(i);
+        if (isLowPoint)
+            count += grid2d.getRiskyLevel(i);
+    }
+
+    int result = count;
+    printf("The solution for part 1 is: %i \n", result);
 }
 
-void lanternfishPart2()
+void smokeBasinPart2()
 {
-  
-  std::vector<std::string> numsStr;
-  readDocument<std::string>(DAY6_PATH, numsStr);
+    std::string resourcePath = getResourcePath(2021, 9);
+    std::vector<std::string> numsStr;
+    readDocument<std::string>(resourcePath, numsStr);
 
-  splitString(numsStr.front(), ',', numsStr);
+    Grid grid2d(numsStr);
+    splitString(numsStr.front(), ',', numsStr);
 
-  std::vector<int> numsFish;
-  std::for_each(numsStr.begin(), numsStr.end(), [&numsFish](std::string s)
+    int count = 0;
+    std::vector<int> basins;
+    grid2d.visited.resize(grid2d.values.size(), false);
+    for (int i = 0; i < grid2d.values.size(); ++i)
     {
-      numsFish.push_back(std::stoi(s));
-    });
+        bool isLowPoint = grid2d.checkPosition(i);
+        if (isLowPoint)
+            basins.push_back(grid2d.computeSizeBasin(i));
+    }
 
-  std::deque<int64_t> fishesCount(9, 0);
+    std::sort(basins.begin(), basins.end());
+    std::reverse(basins.begin(), basins.end());
 
-  for (auto& num : numsFish)
-  {
-    ++fishesCount[num];
-  }
-
-  for (int days = 256 - 1; days >= 0; days--)
-  {
-    const int64_t parent = fishesCount.front();
-    fishesCount.pop_front();
-    fishesCount[6] += parent;
-    fishesCount.push_back(parent);
-  }
-
-
-  long long result = std::accumulate(fishesCount.begin(), fishesCount.end(), int64_t{ 0 });
-  printf("The solution for part 2 is: %lld \n", result);
+    int result = basins[0] * basins[1] * basins[2];
+    printf("The solution for part 2 is: %lld \n", result);
 }
