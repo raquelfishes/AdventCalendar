@@ -23,6 +23,7 @@ add_subdirectory(events/2024)
 add_subdirectory(events/2023)
 add_subdirectory(events/2022)
 add_subdirectory(events/2021)
+add_subdirectory(events/2020)
 
 # ---- Ejecutable principal ----
 add_executable(${PROJECT_NAME} executable/main.cpp)
@@ -33,6 +34,7 @@ target_link_libraries(${PROJECT_NAME}
     advent2023
     advent2022
     advent2021
+    advent2020
     common
 )
 
