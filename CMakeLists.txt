@@ -13,6 +13,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS True)  # Necesario para IntelliSense en VS Cod
 add_library(common STATIC
     common/resources.cpp
     common/utils_2021.cpp
+    common/string_utils.cpp
 )
 
 # Agregar las rutas necesarias para "common"

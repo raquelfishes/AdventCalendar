@@ -93,7 +93,7 @@ struct digitalNumbers
       if (num.size() == 6)
       {
         std::vector<int> v(7);
-        auto it = std::set_difference(auxNum.begin(), auxNum.end(), join47.begin(), join47.end(), v.begin());
+        auto it = std::set_erence(auxNum.begin(), auxNum.end(), join47.begin(), join47.end(), v.begin());
         v.resize(it - v.begin());
         if ( v.size() == 1)
           return num;
@@ -137,7 +137,7 @@ struct digitalNumbers
       {
         std::string join1Num = numberMap[1];
         std::vector<int> v(5);
-        auto it = std::set_difference(auxNum.begin(), auxNum.end(), join1Num.begin(), join1Num.end(), v.begin());
+        auto it = std::set_erence(auxNum.begin(), auxNum.end(), join1Num.begin(), join1Num.end(), v.begin());
         v.resize(it - v.begin());
         if (v.size() == 3)
           return num;

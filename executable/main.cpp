@@ -12,6 +12,7 @@
 // #include "adventdays_fwd.h"
 #include "ansi_colors.h"
 #include "design_base.h"
+#include "day_base.h"
 
 #include "../events/2021/design.h"
 #include "../events/2022/design.h"
@@ -84,6 +85,23 @@ int main(int argc, char *argv[])
     }
 
     int day = getDay();
+
+    ResourceType resourceType = ("mode" == "test") ? ResourceType::TEST : ResourceType::PRODUCTION;
+    std::string problemKey = "2024_01_1";//year + "_" + day + "_" + "1";
+
+    for (auto problem : problemRegistry)
+    {
+        std::cout<< problem.first << std::endl;
+    }
+    
+    try {
+        // Buscar el problema y ejecutarlo
+        problemRegistry.at(problemKey)(resourceType);
+    } catch (const std::out_of_range&) {
+        std::cerr << "Error: Problema no encontrado para la clave " << problemKey << std::endl;
+        return 1;
+    }
+
 }
 
 // void paintAdventCalendar()

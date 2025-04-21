@@ -104,5 +104,5 @@ void day1Part2()
     }
 
     long long result = std::accumulate(higher.begin(), higher.end(), 0);
-    printf("The solution for part 2 is: %i \n", result);
+    printf("The solution for part 2 is: %lli \n", result);
 }
