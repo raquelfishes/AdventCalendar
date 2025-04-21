@@ -83,7 +83,7 @@
         "xtree": "cpp",
         "xutility": "cpp"
     },
-    "editor.formatOnSave": true, // Opcional: formatea el código automáticamente al guardar
+    "editor.formatOnSave": false, // Opcional: formatea el código automáticamente al guardar
     "cmake.buildBeforeRun": true, // Opcional: compila automáticamente antes de ejecutar
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools" // Proporciona la configuración de IntelliSense para C/C++
 }
