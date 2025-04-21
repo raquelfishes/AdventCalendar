@@ -104,8 +104,3 @@ void adventDay2()
     }
     std::cout << "Part2: The number of valid passwords is: " << numberOfCorrectPass << std::endl;
 }
-
-int main(int argc, char *argv[])
-{
-    adventDay2();
-}

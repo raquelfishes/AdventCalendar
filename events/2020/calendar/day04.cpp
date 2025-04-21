@@ -140,8 +140,3 @@ void adventDay4()
     } });
     std::cout << "Part2: The number of valid passports are: " << validPassports << std::endl;
 }
-
-int main(int argc, char *argv[])
-{
-    adventDay4();
-}

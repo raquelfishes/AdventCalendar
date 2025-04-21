@@ -101,8 +101,3 @@ void adventDay5()
     }
     std::cout << "Part2: My seatId is: " << mySeatId << std::endl;
 }
-
-int main(int argc, char *argv[])
-{
-    adventDay5();
-}

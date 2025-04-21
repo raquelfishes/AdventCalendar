@@ -71,8 +71,3 @@ void adventDay3()
     const int result = treeCounter11 * treeCounter31 * treeCounter51 * treeCounter71 * treeCounter12;
     std::cout << "Part1: The number of trees multiplication are: " << result << std::endl;
 }
-
-int main(int argc, char *argv[])
-{
-    adventDay3();
-}
