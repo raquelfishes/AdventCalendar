@@ -51,15 +51,21 @@ MonoBehaviour:
       - rid: 4795779482305429519
       - rid: 4795779482305429520
 <<<<<<< HEAD
+<<<<<<< HEAD
     m_RuntimeSettings:
       m_List: []
   m_AssetVersion: 6
 =======
+=======
+>>>>>>> 05cef5e0de872a95006bab455befd1696f44e909
       - rid: 4795779555780198400
       - rid: 4795779740866707456
     m_RuntimeSettings:
       m_List: []
   m_AssetVersion: 7
+<<<<<<< HEAD
+>>>>>>> 05cef5e0de872a95006bab455befd1696f44e909
+=======
 >>>>>>> 05cef5e0de872a95006bab455befd1696f44e909
   m_ObsoleteDefaultVolumeProfile: {fileID: 0}
   m_RenderingLayerNames:
@@ -99,7 +105,11 @@ MonoBehaviour:
       data:
         m_Version: 0
 <<<<<<< HEAD
+<<<<<<< HEAD
         m_UseRenderGraph: 0
+=======
+        m_EnableRenderCompatibilityMode: 0
+>>>>>>> 05cef5e0de872a95006bab455befd1696f44e909
 =======
         m_EnableRenderCompatibilityMode: 0
 >>>>>>> 05cef5e0de872a95006bab455befd1696f44e909
@@ -222,7 +232,10 @@ MonoBehaviour:
         m_Version: 1
         m_ProbeVolumeDisableStreamingAssets: 0
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 05cef5e0de872a95006bab455befd1696f44e909
     - rid: 4795779555780198400
       type: {class: STP/RuntimeResources, ns: UnityEngine.Rendering, asm: Unity.RenderPipelines.Core.Runtime}
       data:
@@ -240,4 +253,7 @@ MonoBehaviour:
         traceVirtualOffsetRT: {fileID: 4807578003741378534, guid: b60511f4aa1443f4d8c0b18f4fec92f4, type: 3}
         skyOcclusionCS: {fileID: 7200000, guid: 798f52ec82fa04048a12826bbbbcf7b4, type: 3}
         skyOcclusionRT: {fileID: 4807578003741378534, guid: dfaf42b38dd001f49a72d8102b709f29, type: 3}
+<<<<<<< HEAD
+>>>>>>> 05cef5e0de872a95006bab455befd1696f44e909
+=======
 >>>>>>> 05cef5e0de872a95006bab455befd1696f44e909

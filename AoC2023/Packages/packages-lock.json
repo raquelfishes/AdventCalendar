@@ -95,7 +95,11 @@
     },
     "com.unity.burst": {
 <<<<<<< HEAD
+<<<<<<< HEAD
       "version": "1.8.10",
+=======
+      "version": "1.8.11",
+>>>>>>> 05cef5e0de872a95006bab455befd1696f44e909
 =======
       "version": "1.8.11",
 >>>>>>> 05cef5e0de872a95006bab455befd1696f44e909
@@ -148,7 +152,11 @@
     },
     "com.unity.ide.rider": {
 <<<<<<< HEAD
+<<<<<<< HEAD
       "version": "3.0.26",
+=======
+      "version": "3.0.27",
+>>>>>>> 05cef5e0de872a95006bab455befd1696f44e909
 =======
       "version": "3.0.27",
 >>>>>>> 05cef5e0de872a95006bab455befd1696f44e909
@@ -244,7 +252,11 @@
     },
     "com.unity.test-framework": {
 <<<<<<< HEAD
+<<<<<<< HEAD
       "version": "1.4.0",
+=======
+      "version": "1.4.1",
+>>>>>>> 05cef5e0de872a95006bab455befd1696f44e909
 =======
       "version": "1.4.1",
 >>>>>>> 05cef5e0de872a95006bab455befd1696f44e909
